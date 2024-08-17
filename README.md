@@ -8,7 +8,7 @@ Artifact MMO Client: https://artifactsmmo.com/client
 ## Getting Started
 
 ```
-token := "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRoZXN0dWNrc3R0ZXIiLCJwYXNzd29yZF9jaGFuZ2VkIjoiIn0.g3qYaJOY40MEjUu2234JeXYcY-1HeboS7LmGQcHhnuk"
+token := "MyToken"
 character := "MyCharacter"
 client := clients.NewClient(&token)
 
