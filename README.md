@@ -1,7 +1,7 @@
 gopherfacts
 ===
 
-Go sdk for [Artifacts MMO](https://artifactsmmo.com/client). Hand built with love.
+Go sdk for [Artifacts MMO](https://artifactsmmo.com). Hand built with love.
 
 Artifact MMO Client: https://artifactsmmo.com/client
 
