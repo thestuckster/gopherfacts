@@ -34,13 +34,13 @@ type FightResponse struct {
 }
 
 type FightData struct {
-	Cooldown Cooldown `json:"cooldown"`
-	Fight    Fight    `json:"fight"`
-	//TODO: Character struct
+	Cooldown 	Cooldown 			`json:"cooldown"`
+	Fight    	Fight    			`json:"fight"`
+	Character 	CharacterSchema 	`json:"character"`
 }
 
 func (c *MyCharacterClient) Fight(characterName string) (*FightData, error) {
-	url := fmt.Sprintf(MOVE, characterName)
+	url := fmt.Sprintf(FIGHT, characterName)
 	req := internal.BuildPostRequestNoBody(url, *c.token)
 	resp, respBody := internal.MakeHttpRequest(req, false)
 
