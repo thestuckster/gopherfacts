@@ -10,11 +10,20 @@ func main() {
 	character := "Billbert"
 	client := clients.NewClient(&token)
 
-	//TODO: throwing 422 for some reason. need to debug
-	fightData, err := client.MyCharacterClient.Fight(character)
+	err := client.MyCharacterClient.Move(character, -1, 0)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(fightData)
+	gatherData, err := client.MyCharacterClient.Gather(character)
+	if err != nil {
+		panic(err)
+	}
+
+	prettyPrintStruct(gatherData)
+}
+
+
+func prettyPrintStruct(data any) {
+	fmt.Printf("%#v\n", data)
 }

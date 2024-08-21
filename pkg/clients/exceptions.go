@@ -88,19 +88,35 @@ func (e *CharacterInventoryFullException) Error() string {
 	return e.Message
 }
 
-type MonsterNotFoundException struct {
+type ResourceNotFoundException struct {
 	Message string
 }
 
-func NewMonsterNotFoundException() *MonsterNotFoundException {
-	return &MonsterNotFoundException{
-		Message: "Monster not found",
+func NewResourceNotFoundException() *ResourceNotFoundException {
+	return &ResourceNotFoundException{
+		Message: "Resource not found on this map space",
 	}
 }
 
-func (e *MonsterNotFoundException) Error() string {
+func (e *ResourceNotFoundException) Error() string {
 	return e.Message
 }
+
+type SkillLevelToLow struct {
+	Message string
+}
+
+func NewSkillLevelToLow() *SkillLevelToLow {
+	return &SkillLevelToLow {
+		Message: "Skill level too low",
+	}
+}
+
+func (e *SkillLevelToLow) Error() string {
+	return e.Message
+}
+
+//GENERIC HTTP EXCEPTIONS
 
 type ForbiddenException struct {
 	Message string

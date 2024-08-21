@@ -41,11 +41,6 @@ type GetBankItemsResponse struct {
 	Pages int    `json:"pages"`
 }
 
-type Item struct {
-	Code     *string `json:"code"`
-	Quantity int     `json:"quantity"`
-}
-
 func (c *MyAccountClient) GetBankItems(itemCode *string, page, size int) (*GetBankItemsResponse, error) {
 	//TODO:
 	return nil, nil

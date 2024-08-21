@@ -58,6 +58,35 @@ func (c *MyCharacterClient) Fight(characterName string) (*FightData, error) {
 	return &data.Data, nil
 }
 
+type GatherResponse struct {
+	Data GatherData `json:"data"`
+}
+
+type GatherData struct {
+	Cooldown Cooldown `json:"cooldown"`
+	Details CraftDetails `json:"details"`
+	Character CharacterSchema `json:"character"`
+}
+
+func (c *MyCharacterClient) Gather(characterName string) (*GatherData, error) {
+	url := fmt.Sprintf(GATHER, characterName)
+	req := internal.BuildPostRequestNoBody(url, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+
+	err := c.buildError(resp)
+	if(err != nil) {
+		return nil, err
+	}
+
+	var data GatherResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
 func (c *MyCharacterClient) buildError(resp *http.Response) error {
 	switch resp.StatusCode {
 	case 200:
@@ -72,6 +101,8 @@ func (c *MyCharacterClient) buildError(resp *http.Response) error {
 		return NewActionAlreadyInProgressException()
 	case 490:
 		return NewCharacterAlreadyAtDestinationException()
+	case 493:
+		return NewSkillLevelToLow()
 	case 497:
 		return NewCharacterInventoryFullException()
 	case 498:
@@ -79,7 +110,7 @@ func (c *MyCharacterClient) buildError(resp *http.Response) error {
 	case 499:
 		return NewInCoolDownException()
 	case 598:
-		return NewMonsterNotFoundException()
+		return NewResourceNotFoundException()
 	default:
 		return nil
 	}

@@ -106,9 +106,17 @@ type CharacterSchema struct {
 	Inventory               []InventorySlot     `json:"inventory"`
 }
 
-type InventorySlot struct {
-	Slot 		int 	`json:"slot"`
+type Item struct {
 	Code 		string 	`json:"code"`
 	Quantity 	int 	`json:"quantity"`
 }
 
+type InventorySlot struct {
+	Item
+	Slot 		int 	`json:"slot"`
+}
+
+type CraftDetails struct {
+	XpGained 	int 	`json:"xp"`
+	Items 		[]Item 	`json:"items"`
+}
