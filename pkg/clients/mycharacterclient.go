@@ -12,6 +12,28 @@ type MyCharacterClient struct {
 	token *string
 }
 
+type getCharactersResponse struct {
+	Data []CharacterSchema `json:"data"`
+}
+
+func (c *MyCharacterClient) GetAllCharactersInfo() ([]CharacterSchema, Error) {
+	url := fmt.Sprintf(CHARACTER, "characters")
+	req := internal.BuildPostRequestNoBody(url, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err := c.buildError(resp)
+	if err != nil {
+		return []CharacterSchema{}, err
+	}
+
+	var response getCharactersResponse
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return []CharacterSchema{}, err
+	}
+
+	return response.Data, nil
+}
+
 type moveResponse struct {
 	Data MoveData `json:"data"`
 }
