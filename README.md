@@ -18,9 +18,13 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 
 ## APIs 
 
+```
 🚧 Server Status
+```
 
 ### Actions
+
+```
 ✅ Moving
 ✅ Fighting
 ✅ Gathering
@@ -39,18 +43,23 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 🚧 Complete Task
 🚧 Task Exchange
 🚧 Delete Item
-
+```
 
 ### Account
+
+```
 🚧 Change Password
 🚧 Create Character
 🚧 Create Account
 🚧 Create Token
-
+```
 
 ### Meta / Character Info
+
+```
 ✅ Get All Characters Info
 ✅ Get Bank Gold
+
 🚧 Get All Characters Logs
 🚧 Get Specific Character Info
 🚧 Get Map
@@ -58,4 +67,4 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 🚧 Get Item
 🚧 Get All Items
 🚧 ... same for monsters, resources, events, GE, 
-
+```
