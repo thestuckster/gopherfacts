@@ -2,7 +2,7 @@ package clients
 
 import (
 	"encoding/json"
-	"gopherfacts/internal"
+	"github.com/thestuckster/gopherfacts/internal"
 )
 
 type MyAccountClient struct {

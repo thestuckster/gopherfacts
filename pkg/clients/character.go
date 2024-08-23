@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"gopherfacts/internal"
+	"github.com/thestuckster/gopherfacts/internal"
 	"net/http"
 )
 

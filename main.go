@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gopherfacts/pkg/clients"
+	"github.com/thestuckster/gopherfacts/pkg/clients"
 	"os"
 	"time"
 )
