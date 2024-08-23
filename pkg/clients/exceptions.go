@@ -1,6 +1,6 @@
 package clients
 
-type error interface {
+type Error interface {
 	Error() string
 }
 
@@ -107,7 +107,7 @@ type SkillLevelToLow struct {
 }
 
 func NewSkillLevelToLow() *SkillLevelToLow {
-	return &SkillLevelToLow {
+	return &SkillLevelToLow{
 		Message: "Skill level too low",
 	}
 }

@@ -12,7 +12,17 @@ type MyCharacterClient struct {
 	token *string
 }
 
-func (c *MyCharacterClient) Move(characterName string, x, y int) error {
+type MoveResponse struct {
+	Data MoveData `json:"data"`
+}
+
+type MoveData struct {
+	Cooldown  int             `json:"cooldown"`
+	Content   MapContent      `json:"content"`
+	Character CharacterSchema `json:"character"`
+}
+
+func (c *MyCharacterClient) Move(characterName string, x, y int) (*MoveData, Error) {
 
 	body := make(map[string]int)
 	body["x"] = x
@@ -21,12 +31,22 @@ func (c *MyCharacterClient) Move(characterName string, x, y int) error {
 	url := fmt.Sprintf(MOVE, characterName)
 	jsonData, err := json.Marshal(body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
-	resp, _ := internal.MakeHttpRequest(req, false)
-	return c.buildError(resp)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var response MoveResponse
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return nil, err
+	}
+	return &response.Data, nil
 }
 
 type FightResponse struct {
@@ -34,12 +54,12 @@ type FightResponse struct {
 }
 
 type FightData struct {
-	Cooldown 	Cooldown 			`json:"cooldown"`
-	Fight    	Fight    			`json:"fight"`
-	Character 	CharacterSchema 	`json:"character"`
+	Cooldown  Cooldown        `json:"cooldown"`
+	Fight     Fight           `json:"fight"`
+	Character CharacterSchema `json:"character"`
 }
 
-func (c *MyCharacterClient) Fight(characterName string) (*FightData, error) {
+func (c *MyCharacterClient) Fight(characterName string) (*FightData, Error) {
 	url := fmt.Sprintf(FIGHT, characterName)
 	req := internal.BuildPostRequestNoBody(url, *c.token)
 	resp, respBody := internal.MakeHttpRequest(req, false)
@@ -63,18 +83,18 @@ type GatherResponse struct {
 }
 
 type GatherData struct {
-	Cooldown Cooldown `json:"cooldown"`
-	Details CraftDetails `json:"details"`
+	Cooldown  Cooldown        `json:"cooldown"`
+	Details   CraftDetails    `json:"details"`
 	Character CharacterSchema `json:"character"`
 }
 
-func (c *MyCharacterClient) Gather(characterName string) (*GatherData, error) {
+func (c *MyCharacterClient) Gather(characterName string) (*GatherData, Error) {
 	url := fmt.Sprintf(GATHER, characterName)
 	req := internal.BuildPostRequestNoBody(url, *c.token)
 	resp, respBody := internal.MakeHttpRequest(req, false)
 
 	err := c.buildError(resp)
-	if(err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
@@ -87,7 +107,7 @@ func (c *MyCharacterClient) Gather(characterName string) (*GatherData, error) {
 	return &data.Data, nil
 }
 
-func (c *MyCharacterClient) buildError(resp *http.Response) error {
+func (c *MyCharacterClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:
 		return nil

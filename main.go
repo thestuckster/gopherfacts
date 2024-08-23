@@ -3,27 +3,32 @@ package main
 import (
 	"fmt"
 	"gopherfacts/pkg/clients"
+	"os"
+	"time"
 )
 
 func main() {
-	token := "MyToken"
+	token := os.Getenv("TOKEN")
 	character := "Billbert"
 	client := clients.NewClient(&token)
 
-	err := client.MyCharacterClient.Move(character, -1, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	gatherData, err := client.MyCharacterClient.Gather(character)
-	if err != nil {
-		panic(err)
-	}
-
-	prettyPrintStruct(gatherData)
+	farmChickens(character, client)
 }
 
+func farmChickens(name string, client *clients.GopherFactClient) {
 
-func prettyPrintStruct(data any) {
-	fmt.Printf("%#v\n", data)
+	turns := 0
+	for {
+		fightData, err := client.MyCharacterClient.Fight(name)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("turn %d: Got %d xp from fight\n", turns, fightData.Fight.Xp)
+		coolDown := fightData.Cooldown.TotalSeconds
+		fmt.Printf("Cooling down for %d seconds\n", coolDown)
+		time.Sleep(time.Duration(coolDown) * time.Second)
+		turns++
+	}
+
 }

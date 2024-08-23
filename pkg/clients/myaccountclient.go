@@ -17,7 +17,7 @@ type BankGold struct {
 	Quantity int
 }
 
-func (c *MyAccountClient) GetBankGold() (*BankGold, error) {
+func (c *MyAccountClient) GetBankGold() (*BankGold, Error) {
 	req := internal.BuildGetRequest(BANK_GOLD, *c.token)
 	resp, body := internal.MakeHttpRequest(req, false)
 
@@ -41,7 +41,7 @@ type GetBankItemsResponse struct {
 	Pages int    `json:"pages"`
 }
 
-func (c *MyAccountClient) GetBankItems(itemCode *string, page, size int) (*GetBankItemsResponse, error) {
+func (c *MyAccountClient) GetBankItems(itemCode *string, page, size int) (*GetBankItemsResponse, Error) {
 	//TODO:
 	return nil, nil
 }
