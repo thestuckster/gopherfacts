@@ -172,6 +172,49 @@ func (c *CharacterClient) Craft(characterName, itemCode string, amount int) (*Cr
 	return &data.Data, nil
 }
 
+type depositRequest struct {
+	Code     string `json:"code"`
+	Quantity int    `json:"quantity"`
+}
+
+type depositResponse struct {
+	Data DepositData `json:"data"`
+}
+
+type DepositData struct {
+	Cooldown      Cooldown        `json:"cooldown"`
+	Item          Item            `json:"item"`
+	BankInventory []Item          `json:"bank"`
+	Character     CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) DepositIntoBank(characterName, itemCode string, amount int) (*DepositData, Error) {
+	url := fmt.Sprintf(DEPOSIT_CHARACTER_BANK, characterName)
+	body := depositRequest{
+		Quantity: amount,
+		Code:     itemCode,
+	}
+
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data depositResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data.Data, nil
+}
+
 func (c *CharacterClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:
