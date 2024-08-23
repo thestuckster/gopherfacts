@@ -39,7 +39,7 @@ type moveResponse struct {
 }
 
 type MoveData struct {
-	Cooldown  int             `json:"cooldown"`
+	Cooldown  Cooldown        `json:"cooldown"`
 	Content   MapContent      `json:"content"`
 	Character CharacterSchema `json:"character"`
 }
