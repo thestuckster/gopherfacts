@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-type MyCharacterClient struct {
+type CharacterClient struct {
 	token *string
 }
 
@@ -16,7 +16,7 @@ type getCharactersResponse struct {
 	Data []CharacterSchema `json:"data"`
 }
 
-func (c *MyCharacterClient) GetAllCharactersInfo() ([]CharacterSchema, Error) {
+func (c *CharacterClient) GetAllCharactersInfo() ([]CharacterSchema, Error) {
 	url := fmt.Sprintf(CHARACTER, "characters")
 	req := internal.BuildPostRequestNoBody(url, *c.token)
 	resp, respBody := internal.MakeHttpRequest(req, false)
@@ -44,7 +44,7 @@ type MoveData struct {
 	Character CharacterSchema `json:"character"`
 }
 
-func (c *MyCharacterClient) Move(characterName string, x, y int) (*MoveData, Error) {
+func (c *CharacterClient) Move(characterName string, x, y int) (*MoveData, Error) {
 
 	body := make(map[string]int)
 	body["x"] = x
@@ -81,7 +81,7 @@ type FightData struct {
 	Character CharacterSchema `json:"character"`
 }
 
-func (c *MyCharacterClient) Fight(characterName string) (*FightData, Error) {
+func (c *CharacterClient) Fight(characterName string) (*FightData, Error) {
 	url := fmt.Sprintf(FIGHT, characterName)
 	req := internal.BuildPostRequestNoBody(url, *c.token)
 	resp, respBody := internal.MakeHttpRequest(req, false)
@@ -110,7 +110,7 @@ type GatherData struct {
 	Character CharacterSchema `json:"character"`
 }
 
-func (c *MyCharacterClient) Gather(characterName string) (*GatherData, Error) {
+func (c *CharacterClient) Gather(characterName string) (*GatherData, Error) {
 	url := fmt.Sprintf(GATHER, characterName)
 	req := internal.BuildPostRequestNoBody(url, *c.token)
 	resp, respBody := internal.MakeHttpRequest(req, false)
@@ -144,7 +144,7 @@ type CraftData struct {
 	Character CharacterSchema `json:"character"`
 }
 
-func (c *MyCharacterClient) Craft(characterName, itemCode string, amount int) (*CraftData, Error) {
+func (c *CharacterClient) Craft(characterName, itemCode string, amount int) (*CraftData, Error) {
 	url := fmt.Sprintf(CRAFT, characterName)
 	body := craftRequest{
 		Quantity: amount,
@@ -172,7 +172,7 @@ func (c *MyCharacterClient) Craft(characterName, itemCode string, amount int) (*
 	return &data.Data, nil
 }
 
-func (c *MyCharacterClient) buildError(resp *http.Response) Error {
+func (c *CharacterClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:
 		return nil

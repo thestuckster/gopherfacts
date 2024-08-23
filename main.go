@@ -19,7 +19,7 @@ func farmChickens(name string, client *clients.GopherFactClient) {
 
 	turns := 0
 	for {
-		fightData, err := client.MyCharacterClient.Fight(name)
+		fightData, err := client.CharacterClient.Fight(name)
 		if err != nil {
 			panic(err)
 		}
