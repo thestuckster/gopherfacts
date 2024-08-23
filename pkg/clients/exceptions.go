@@ -116,6 +116,20 @@ func (e *SkillLevelToLow) Error() string {
 	return e.Message
 }
 
+type NotEnoughResourcesException struct {
+	Message string
+}
+
+func NewNotEnoughResourcesException() *NotEnoughResourcesException {
+	return &NotEnoughResourcesException{
+		Message: "Not enough resources to complete this action",
+	}
+}
+
+func (e *NotEnoughResourcesException) Error() string {
+	return e.Message
+}
+
 //GENERIC HTTP EXCEPTIONS
 
 type ForbiddenException struct {
