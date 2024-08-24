@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+const chickens = "0:1"
 const cookingLocation = "1:1"
 const weaponCraftingLocation = "2:1"
 const gearCraftingLocation = "3:1"
@@ -18,6 +19,25 @@ const miningLocation = "1:5"
 type EasyClient struct {
 	token      *string
 	charClient *CharacterClient
+}
+
+func (c *EasyClient) DepositIntoBank(characterName, itemCode string, amount int) (*DepositData, Error) {
+	_, err := c.MoveToBank(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	depositData, err := c.charClient.DepositIntoBank(characterName, itemCode, amount)
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep(time.Duration(depositData.Cooldown.RemainingSeconds) * time.Second)
+	return depositData, nil
+}
+
+func (c *EasyClient) MoveToChickens(characterName string) (*MoveData, Error) {
+	return c.moveToLocation(characterName, chickens)
 }
 
 func (c *EasyClient) MoveToBank(characterName string) (*MoveData, Error) {

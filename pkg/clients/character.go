@@ -34,6 +34,28 @@ func (c *CharacterClient) GetAllCharactersInfo() ([]CharacterSchema, Error) {
 	return response.Data, nil
 }
 
+type getSingleCharacterResponse struct {
+	Data CharacterSchema `json:"data"`
+}
+
+func (c *CharacterClient) GetCharacterInfo(name string) (*CharacterSchema, Error) {
+	url := fmt.Sprintf(CHARACTER_INFO, name)
+	req := internal.BuildGetRequest(url, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err := c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var response getSingleCharacterResponse
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response.Data, nil
+}
+
 type moveResponse struct {
 	Data MoveData `json:"data"`
 }
