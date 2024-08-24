@@ -51,6 +51,7 @@ func (c *EasyClient) moveToLocation(characterName, coords string) (*MoveData, Er
 		if ex, ok := err.(*CharacterAlreadyAtDestinationException); ok {
 			// err is of type *CharacterAlreadyAtDestinationException
 			fmt.Println(ex.Message)
+			return nil, nil
 		} else {
 			// Handle other errors
 			return nil, err

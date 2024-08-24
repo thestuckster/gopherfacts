@@ -125,8 +125,9 @@ type Item struct {
 }
 
 type InventorySlot struct {
-	Item
-	Slot int `json:"slot"`
+	Code     string `json:"code"`
+	Quantity int    `json:"quantity"`
+	Slot     int    `json:"slot"`
 }
 
 type CraftDetails struct {
