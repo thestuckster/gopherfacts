@@ -5,33 +5,37 @@ import (
 	"fmt"
 	"github.com/thestuckster/gopherfacts/pkg/clients"
 	"os"
+	"sync"
 	"time"
 )
 
 func main() {
+	time.Sleep(58 * time.Second)
+
 	fmt.Println("starting gopherfacts")
 	token := os.Getenv("TOKEN")
 	character := "Billbert"
 	minerCharacter := "AMiner"
 	client := clients.NewClient(&token)
 
-	go farmChickens(character, client)
-	go farmCopper(minerCharacter, client)
-	for {
-		//do noting to stay alive
-	}
-	//dumpInventoryIntoBank(character, client)
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	go farmChickens(character, client, &wg)
+	go farmCopper(minerCharacter, client, &wg)
+
+	wg.Wait()
 }
 
-func farmChickens(name string, client *clients.GopherFactClient) {
-
+func farmChickens(name string, client *clients.GopherFactClient, wg *sync.WaitGroup) {
+	defer wg.Done()
 	fmt.Println("farming chickens")
 	_, err := client.EasyClient.MoveToChickens(name)
 	if err != nil {
 		panic(err)
 	}
 
-	turns := 410
+	turns := 0
 	for {
 		fightData, err := client.CharacterClient.Fight(name)
 		if err != nil {
@@ -50,9 +54,9 @@ func farmChickens(name string, client *clients.GopherFactClient) {
 		}
 
 		if err == nil {
-			fmt.Printf("turn %d: Got %d xp from fight\n", turns, fightData.Fight.Xp)
+			fmt.Printf("FIGHT: turn %d: Got %d xp from fight\n", turns, fightData.Fight.Xp)
 			coolDown := fightData.Cooldown.TotalSeconds
-			fmt.Printf("Cooling down for %d seconds\n", coolDown)
+			fmt.Printf("Fighting done. Cooling down for %d seconds\n", coolDown)
 			time.Sleep(time.Duration(coolDown) * time.Second)
 			turns++
 		}
@@ -60,7 +64,9 @@ func farmChickens(name string, client *clients.GopherFactClient) {
 
 }
 
-func farmCopper(name string, client *clients.GopherFactClient) {
+func farmCopper(name string, client *clients.GopherFactClient, wg *sync.WaitGroup) {
+	wg.Done()
+
 	fmt.Println("farming copper")
 	turns := 0
 	for {
@@ -81,10 +87,12 @@ func farmCopper(name string, client *clients.GopherFactClient) {
 		}
 
 		if err == nil {
-			message := fmt.Sprintf("turn %d: Got %d xp from gather\n and looted:\n", turns, gatherData.Details.XpGained)
+			message := fmt.Sprintf("MINING: turn %d: Got %d xp from gather\n and looted:\n", turns, gatherData.Details.XpGained)
 			for _, item := range gatherData.Details.Items {
 				message += fmt.Sprintf("    %d %s\n", item.Quantity, item.Code)
 			}
+
+			println(message)
 			turns++
 		}
 	}

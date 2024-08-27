@@ -55,7 +55,9 @@ func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
 		return nil, err
 	}
 
-	time.Sleep(time.Duration(gatherData.Cooldown.RemainingSeconds) * time.Second)
+	coolDown := gatherData.Cooldown.RemainingSeconds
+	fmt.Printf("Mining done. sleeping for %d seconds\n", coolDown)
+	time.Sleep(time.Duration(coolDown) * time.Second)
 
 	return gatherData, nil
 }
