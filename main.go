@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	fmt.Println("starting gopherfacts")
 	token := os.Getenv("TOKEN")
 	character := "Billbert"
 	minerCharacter := "AMiner"
