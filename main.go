@@ -22,6 +22,7 @@ func main() {
 
 func farmChickens(name string, client *clients.GopherFactClient) {
 
+	fmt.Println("farming chickens")
 	_, err := client.EasyClient.MoveToChickens(name)
 	if err != nil {
 		panic(err)
@@ -57,6 +58,7 @@ func farmChickens(name string, client *clients.GopherFactClient) {
 }
 
 func farmCopper(name string, client *clients.GopherFactClient) {
+	fmt.Println("farming copper")
 	turns := 0
 	for {
 		gatherData, err := client.EasyClient.MineCopper(name)
