@@ -11,9 +11,11 @@ import (
 func main() {
 	token := os.Getenv("TOKEN")
 	character := "Billbert"
+	minerCharacter := "AMiner"
 	client := clients.NewClient(&token)
 
-	farmChickens(character, client)
+	go farmChickens(character, client)
+	go farmCopper(minerCharacter, client)
 	//dumpInventoryIntoBank(character, client)
 }
 
@@ -51,6 +53,35 @@ func farmChickens(name string, client *clients.GopherFactClient) {
 		}
 	}
 
+}
+
+func farmCopper(name string, client *clients.GopherFactClient) {
+	turns := 0
+	for {
+		gatherData, err := client.EasyClient.MineCopper(name)
+		if err != nil {
+			var ex *clients.CharacterInventoryFullException
+			if errors.As(err, &ex) {
+				fmt.Println("%%%%%")
+				fmt.Println(ex.Message)
+				dumpInventoryIntoBank(name, client)
+				_, err := client.EasyClient.MoveToChickens(name)
+				if err != nil {
+					panic(err)
+				}
+			} else {
+				panic(err)
+			}
+		}
+
+		if err == nil {
+			message := fmt.Sprintf("turn %d: Got %d xp from gather\n and looted:\n", turns, gatherData.Details.XpGained)
+			for _, item := range gatherData.Details.Items {
+				message += fmt.Sprintf("    %d %s\n", item.Quantity, item.Code)
+			}
+			turns++
+		}
+	}
 }
 
 func dumpInventoryIntoBank(name string, client *clients.GopherFactClient) {

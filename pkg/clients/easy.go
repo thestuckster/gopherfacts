@@ -44,6 +44,22 @@ func (c *EasyClient) MoveToBank(characterName string) (*MoveData, Error) {
 	return c.moveToLocation(characterName, bankLocation)
 }
 
+func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
+	_, err := c.moveToLocation(characterName, "2:0")
+	if err != nil {
+		return nil, err
+	}
+
+	gatherData, err := c.charClient.Gather(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep(time.Duration(gatherData.Cooldown.RemainingSeconds) * time.Second)
+
+	return gatherData, nil
+}
+
 func (c *EasyClient) moveToLocation(characterName, coords string) (*MoveData, Error) {
 	x, y := getCoords(coords)
 	moveResp, err := c.charClient.Move(characterName, x, y)
