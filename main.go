@@ -17,6 +17,9 @@ func main() {
 
 	go farmChickens(character, client)
 	go farmCopper(minerCharacter, client)
+	for {
+		//do noting to stay alive
+	}
 	//dumpInventoryIntoBank(character, client)
 }
 
