@@ -39,7 +39,7 @@ func main() {
 func farmChickens(name string, client *clients.GopherFactClient, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	chickenLogger := logger.With().Str("method", "farmChicksn").Str("character", name).Logger()
+	chickenLogger := logger.With().Str("method", "farmChickens").Str("character", name).Logger()
 
 	chickenLogger.Info().Msg("Farming Chickens")
 	_, err := client.EasyClient.MoveToChickens(name)
@@ -81,7 +81,7 @@ func farmChickens(name string, client *clients.GopherFactClient, wg *sync.WaitGr
 func farmCopper(name string, client *clients.GopherFactClient, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	copperLogger := logger.With().Str("method", "farmChicksn").Str("character", name).Logger()
+	copperLogger := logger.With().Str("method", "farmCopper").Str("character", name).Logger()
 
 	copperLogger.Info().Msg("Farming Copper")
 	turns := 0
