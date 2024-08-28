@@ -14,10 +14,10 @@ func ClosestPoint(start *Point, targets []Point) Point {
 	}
 
 	closest := targets[0]
-	minDistance := distance(*start, closest)
+	minDistance := manhattanDistance(*start, closest)
 
 	for _, target := range targets[1:] {
-		d := distance(*start, target)
+		d := manhattanDistance(*start, target)
 		if d < minDistance {
 			closest = target
 			minDistance = d
@@ -27,7 +27,7 @@ func ClosestPoint(start *Point, targets []Point) Point {
 	return closest
 }
 
-// distance calculates the Euclidean distance between two points
-func distance(a, b Point) float64 {
-	return math.Sqrt(math.Pow(a.X-b.X, 2) + math.Pow(a.Y-b.Y, 2))
+// manhattanDistance calculates the Manhattan distance between two points
+func manhattanDistance(a, b Point) float64 {
+	return math.Abs(a.X-b.X) + math.Abs(a.Y-b.Y)
 }
