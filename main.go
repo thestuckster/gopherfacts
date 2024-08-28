@@ -104,7 +104,8 @@ func farmCopper(name string, client *clients.GopherFactClient, wg *sync.WaitGrou
 		}
 
 		if err == nil {
-			message := fmt.Sprintf("MINING: turn %d: Got %d xp from gather\n and looted:\n", turns, gatherData.Details.XpGained)
+
+			message := fmt.Sprintf("MINING: turn %d: Got %d xp from gather\n and looted:%v", turns, gatherData.Details.XpGained, gatherData.Details.Items)
 			for _, item := range gatherData.Details.Items {
 				message += fmt.Sprintf("    %d %s\n", item.Quantity, item.Code)
 			}
@@ -127,7 +128,8 @@ func dumpInventoryIntoBank(name string, client *clients.GopherFactClient) {
 
 	inventory := charData.Inventory
 	for _, item := range inventory {
-		dumpLogger.Info().Msgf("Dumping all %s into bank\n", item.Code)
+		//TODO: Item.Code seems to be logging as an empty string... but the deposit code is working... weird.
+		dumpLogger.Info().Msgf("Dumping all %s into bank", item.Code)
 		if item.Code != "" {
 			_, err := client.EasyClient.DepositIntoBank(name, item.Code, item.Quantity)
 			if err != nil {
