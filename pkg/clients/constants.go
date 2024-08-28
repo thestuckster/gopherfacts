@@ -14,3 +14,6 @@ const CHARACTER_BANK = ACTION + "bank/"
 const DEPOSIT_CHARACTER_BANK = CHARACTER_BANK + "deposit"
 
 const CHARACTER_INFO = BASE_URL + "characters/%s"
+
+const ITEM_INFO = BASE_URL + "items"
+const ALL_MAPS = BASE_URL + "maps"

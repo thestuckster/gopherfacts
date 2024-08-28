@@ -160,3 +160,19 @@ func NewUnprocessableEntityException() *UnprocessableEntityException {
 func (e *UnprocessableEntityException) Error() string {
 	return e.Message
 }
+
+// GENERIC EXCEPTIONS
+
+type CatchAllException struct {
+	Message string
+}
+
+func NewCatchAllException(msg string) *CatchAllException {
+	return &CatchAllException{
+		Message: msg,
+	}
+}
+
+func (e *CatchAllException) Error() string {
+	return e.Message
+}

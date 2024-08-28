@@ -22,7 +22,11 @@ func BuildPostRequestNoBody(fullUrl, bearerToken string) *http.Request {
 func BuildHttpRequest(method, fullUrl, bearerToken string, body io.Reader) *http.Request {
 
 	req, err := http.NewRequest(method, fullUrl, body)
-	req.Header.Add("Authorization", "Bearer "+bearerToken)
+
+	if bearerToken != "" {
+		req.Header.Add("Authorization", "Bearer "+bearerToken)
+	}
+
 	req.Header.Add("Accept", "application/json")
 	if method == "POST" || method == "PUT" && body != nil {
 		req.Header.Add("Content-Type", "application/json")
