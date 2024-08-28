@@ -28,7 +28,7 @@ type EasyClient struct {
 }
 
 func (c *EasyClient) DepositIntoBank(characterName, itemCode string, amount int) (*DepositData, Error) {
-	_, err := c.MoveToClosetLocation(characterName, "bank")
+	_, err := c.MoveToBank(characterName)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +71,7 @@ func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
 	return gatherData, nil
 }
 
+// TODO: this is broken
 func (c *EasyClient) MoveToClosetLocation(characterName, resource string) (*MoveData, Error) {
 
 	moveLogger := logger.With().Str("character", characterName).Str("resource", resource).Logger()
