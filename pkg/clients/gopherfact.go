@@ -12,10 +12,17 @@ func NewClient(token *string) *GopherFactClient {
 	characterClient := &CharacterClient{
 		token: token,
 	}
+
+	mapClient := &MapClient{}
+
 	return &GopherFactClient{
 		token:           token,
 		CharacterClient: characterClient,
 		AccountClient:   &MyAccountClient{token},
-		EasyClient:      &EasyClient{token, characterClient},
+		EasyClient: &EasyClient{
+			token,
+			characterClient,
+			mapClient,
+		},
 	}
 }

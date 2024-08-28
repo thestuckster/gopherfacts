@@ -33,7 +33,9 @@ type MapTileContent struct {
 	Code string `json:"code"`
 }
 
-func GetMapDataForResource(resource *string, page int) (*[]MapTileData, Error) {
+// TODO right now I'm only searching for very specific locations, so theres only a few options and no risk of pagination
+// eventually I'll have to account for actual multiple pages
+func (c *MapClient) GetMapDataForResource(resource *string, page int) (*[]MapTileData, Error) {
 
 	logger := zerolog.New(os.Stdout).With().Timestamp().Caller().Str("resource", *resource).Int("page", page).Logger()
 

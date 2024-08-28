@@ -2,6 +2,9 @@ package clients
 
 import (
 	"fmt"
+	"github.com/rs/zerolog"
+	"github.com/thestuckster/gopherfacts/internal"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -16,13 +19,16 @@ const geLocation = "5:1"
 const jewelryLocation = "1:3"
 const miningLocation = "1:5"
 
+var logger = zerolog.New(os.Stdout).With().Timestamp().Caller().Logger()
+
 type EasyClient struct {
 	token      *string
 	charClient *CharacterClient
+	mapClient  *MapClient
 }
 
 func (c *EasyClient) DepositIntoBank(characterName, itemCode string, amount int) (*DepositData, Error) {
-	_, err := c.MoveToBank(characterName)
+	_, err := c.MoveToClosetLocation(characterName, "bank")
 	if err != nil {
 		return nil, err
 	}
@@ -62,13 +68,60 @@ func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
 	return gatherData, nil
 }
 
+func (c *EasyClient) MoveToClosetLocation(characterName, resource string) (*MoveData, Error) {
+
+	moveLogger := logger.With().Str("character", characterName).Str("resource", resource).Logger()
+
+	characterData, err := c.charClient.GetCharacterInfo(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	mapTiles, err := c.mapClient.GetMapDataForResource(&resource, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	startingPoint := internal.Point{
+		X: float64(characterData.X),
+		Y: float64(characterData.Y),
+	}
+	targets := buildTargetPoints(mapTiles)
+	closestPoint := internal.ClosestPoint(&startingPoint, *targets)
+
+	coordString := fmt.Sprintf("%d:%d", closestPoint.X, closestPoint.Y)
+	moveLogger.Info().Msgf("Found cloest location to resource at %s", coordString)
+
+	moveData, err := c.moveToLocation(characterName, coordString)
+	if err != nil {
+		return nil, err
+	}
+
+	return moveData, nil
+}
+
+func buildTargetPoints(mapTiles *[]MapTileData) *[]internal.Point {
+
+	targets := make([]internal.Point, len(*mapTiles))
+	for _, tile := range *mapTiles {
+		targets = append(targets, internal.Point{
+			X: float64(tile.X),
+			Y: float64(tile.Y),
+		})
+	}
+
+	return &targets
+}
+
 func (c *EasyClient) moveToLocation(characterName, coords string) (*MoveData, Error) {
+	moveLogger := logger.With().Str("character", characterName).Str("coords", coords).Logger()
+
 	x, y := getCoords(coords)
 	moveResp, err := c.charClient.Move(characterName, x, y)
 	if err != nil {
-		if ex, ok := err.(*CharacterAlreadyAtDestinationException); ok {
+		if _, ok := err.(*CharacterAlreadyAtDestinationException); ok {
 			// err is of type *CharacterAlreadyAtDestinationException
-			fmt.Println(ex.Message)
+			moveLogger.Debug().Msg("Character is already at location")
 			return nil, nil
 		} else {
 			// Handle other errors
