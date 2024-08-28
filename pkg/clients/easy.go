@@ -51,6 +51,9 @@ func (c *EasyClient) MoveToBank(characterName string) (*MoveData, Error) {
 }
 
 func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
+
+	miningLogger := logger.With().Str("character", characterName).Logger()
+
 	_, err := c.moveToLocation(characterName, "2:0")
 	if err != nil {
 		return nil, err
@@ -62,7 +65,7 @@ func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
 	}
 
 	coolDown := gatherData.Cooldown.RemainingSeconds
-	fmt.Printf("Mining done. sleeping for %d seconds\n", coolDown)
+	miningLogger.Info().Msgf("Mining done. sleeping for %d seconds\n", coolDown)
 	time.Sleep(time.Duration(coolDown) * time.Second)
 
 	return gatherData, nil
