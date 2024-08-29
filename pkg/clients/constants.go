@@ -10,9 +10,13 @@ const MOVE = ACTION + "move/"
 const FIGHT = ACTION + "fight/"
 const GATHER = ACTION + "gathering"
 const CRAFT = ACTION + "crafting"
+
 const CHARACTER_BANK = ACTION + "bank/"
 const DEPOSIT_CHARACTER_BANK = CHARACTER_BANK + "deposit"
 const WITHDRAW_CHARACTER_BANK = CHARACTER_BANK + "withdraw"
+
+const GE = ACTION + "ge/"
+const GE_BUY = GE + "buy"
 
 const CHARACTER_INFO = BASE_URL + "characters/%s"
 

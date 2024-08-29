@@ -276,6 +276,52 @@ func (c *CharacterClient) WithdrawFromBank(characterName, itemCode string, amoun
 	return &data.Data, nil
 }
 
+type buyItemRequest struct {
+	Quantity int    `json:"quantity"`
+	Code     string `json:"code"`
+	Price    int    `json:"price"`
+}
+
+type buyItemResponse struct {
+	Data BuyItemData `json:"data"`
+}
+
+type BuyItemData struct {
+	Cooldown    Cooldown        `json:"cooldown"`
+	Transaction Transaction     `json:"transaction"`
+	Character   CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) BuyItem(characterName, itemCode string, amount, price int) (*BuyItemData, Error) {
+	//TODO:
+	url := fmt.Sprintf(GE_BUY, characterName)
+	body := buyItemRequest{
+		Quantity: amount,
+		Code:     itemCode,
+		Price:    price,
+	}
+
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data buyItemResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
 func (c *CharacterClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:
@@ -288,6 +334,8 @@ func (c *CharacterClient) buildError(resp *http.Response) Error {
 		return NewUnprocessableEntityException()
 	case 478:
 		return NewNotEnoughResourcesException()
+	//TODO: GE buy 482
+	//TODO: GE buy 483
 	case 486:
 		return NewActionAlreadyInProgressException()
 	case 490:

@@ -30,14 +30,14 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Gathering
 ✅ Crafting
 ✅ Bank Deposit
+✅ Withdraw Bank Item
+✅ Grand Exchange Buy
 
 🚧 Equip Item
 🚧 Unequip Item
 🚧 Deposit Bank Gold
 🚧 Recycle
-🚧 Withdraw Bank Item
 🚧 Withdraw Bank Gold
-🚧 Grand Exchange Buy
 🚧 Grand Exchange Sell
 🚧 Accept task
 🚧 Complete Task
@@ -58,6 +58,7 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 
 ```
 ✅ Get All Characters Info
+✅ Get single character info
 ✅ Get Bank Gold
 
 🚧 Get All Characters Logs

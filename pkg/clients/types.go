@@ -134,3 +134,10 @@ type CraftDetails struct {
 	XpGained int    `json:"xp"`
 	Items    []Item `json:"items"`
 }
+
+type Transaction struct {
+	Code       string `json:"code"`
+	Quantity   int    `json:"quantity"`
+	Price      int    `json:"price"`
+	TotalPrice int    `json:"total_price"`
+}
