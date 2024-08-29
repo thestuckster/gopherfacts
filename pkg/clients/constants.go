@@ -12,6 +12,7 @@ const GATHER = ACTION + "gathering"
 const CRAFT = ACTION + "crafting"
 const CHARACTER_BANK = ACTION + "bank/"
 const DEPOSIT_CHARACTER_BANK = CHARACTER_BANK + "deposit"
+const WITHDRAW_CHARACTER_BANK = CHARACTER_BANK + "withdraw"
 
 const CHARACTER_INFO = BASE_URL + "characters/%s"
 

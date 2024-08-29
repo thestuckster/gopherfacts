@@ -17,7 +17,7 @@ const gearCraftingLocation = "3:1"
 const bankLocation = "4:1"
 const geLocation = "5:1"
 const jewelryLocation = "1:3"
-const miningLocation = "1:5"
+const forgeLocation = "1:5"
 
 var logger = zerolog.New(os.Stdout).With().Timestamp().Caller().Logger()
 
@@ -48,6 +48,10 @@ func (c *EasyClient) MoveToChickens(characterName string) (*MoveData, Error) {
 
 func (c *EasyClient) MoveToBank(characterName string) (*MoveData, Error) {
 	return c.moveToLocation(characterName, bankLocation)
+}
+
+func (c *EasyClient) MoveToForge(characterName string) (*MoveData, Error) {
+	return c.moveToLocation(characterName, forgeLocation)
 }
 
 func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
