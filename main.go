@@ -24,15 +24,17 @@ func main() {
 	character := "Billbert"
 	minerCharacter := "AMiner"
 	crafter := "smellyfeet"
+	fisher := "Drone"
 
 	client := clients.NewClient(&token)
 
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(4)
 
 	go farmChickens(character, client, &wg)
 	go miningFarm(minerCharacter, client, &wg)
 	go smeltCopper(crafter, client, &wg)
+	go fishFarm(fisher, client, &wg)
 
 	wg.Wait()
 }
@@ -46,7 +48,7 @@ func farmChickens(name string, client *clients.GopherFactClient, wg *sync.WaitGr
 	_, err := client.EasyClient.MoveToChickens(name)
 	if err != nil {
 		chickenLogger.Error().Err(err).Msg("Farming Chickens failed")
-		panic(err)
+		return
 	}
 
 	turns := 0
@@ -60,11 +62,11 @@ func farmChickens(name string, client *clients.GopherFactClient, wg *sync.WaitGr
 				_, err := client.EasyClient.MoveToChickens(name)
 				if err != nil {
 					chickenLogger.Error().Err(err).Msg("Moving back to chickens after bank dump failed")
-					panic(err)
+					break
 				}
 			} else {
 				chickenLogger.Error().Err(err).Msg("Fighting chickens failed")
-				panic(err)
+				break
 			}
 		}
 
@@ -112,7 +114,7 @@ func miningFarm(name string, client *clients.GopherFactClient, wg *sync.WaitGrou
 				dumpInventoryIntoBank(name, client)
 			} else {
 				miningLogger.Debug().Err(err).Msg("Mining operation  failed")
-				panic(err)
+				break
 			}
 		}
 
@@ -162,6 +164,29 @@ func smeltCopper(name string, client *clients.GopherFactClient, wg *sync.WaitGro
 		dumpInventoryIntoBank(name, client)
 
 		turns++
+	}
+}
+
+func fishFarm(name string, client *clients.GopherFactClient, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	fishingLogger := logger.With().Str("method", "fishFarm").Str("character", name).Logger()
+	fishingLogger.Info().Msg("Fishing Operation commencing....")
+
+	for {
+		gatherData, err := client.EasyClient.FishGudgeon(name)
+		if err != nil {
+			var ex *clients.CharacterInventoryFullException
+			if errors.As(err, &ex) {
+				fishingLogger.Debug().Msg("Inventory full")
+				dumpInventoryIntoBank(name, client)
+			} else {
+				fishingLogger.Debug().Err(err).Msg("fishing operation failed")
+				break
+			}
+		}
+
+		fishingLogger.Info().Msgf("Fishing complete. got %v fish", gatherData.Details.Items)
 	}
 }
 

@@ -18,6 +18,7 @@ const bankLocation = "4:1"
 const geLocation = "5:1"
 const jewelryLocation = "1:3"
 const forgeLocation = "1:5"
+const gudgeonLocation = "4:2"
 
 var logger = zerolog.New(os.Stdout).With().Timestamp().Caller().Logger()
 
@@ -105,6 +106,22 @@ func (c *EasyClient) MineIron(characterName string) (*GatherData, Error) {
 	coolDown := gatherData.Cooldown.RemainingSeconds
 	miningLogger.Info().Msgf("Mining done. sleeping for %d seconds\n", coolDown)
 	time.Sleep(time.Duration(coolDown) * time.Second)
+
+	return gatherData, nil
+}
+
+func (c *EasyClient) FishGudgeon(characterName string) (*GatherData, Error) {
+	_, err := c.moveToLocation(characterName, gudgeonLocation)
+	if err != nil {
+		return nil, err
+	}
+
+	gatherData, err := c.charClient.Gather(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep(time.Duration(gatherData.Cooldown.RemainingSeconds) * time.Second)
 
 	return gatherData, nil
 }
