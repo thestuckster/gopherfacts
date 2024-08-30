@@ -33,7 +33,8 @@ func main() {
 
 	go farmChickens(character, client, &wg)
 	go miningFarm(minerCharacter, client, &wg)
-	go smeltCopper(crafter, client, &wg)
+	go miningFarm(crafter, client, &wg)
+	//go smeltCopper(crafter, client, &wg)
 	go fishFarm(fisher, client, &wg)
 
 	wg.Wait()
