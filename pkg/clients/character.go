@@ -335,6 +335,78 @@ func (c *CharacterClient) itemTransaction(characterName, itemCode string, amount
 	return &data.Data, nil
 }
 
+type equipRequest struct {
+	Code     string `json:"code"`
+	Slot     string `json:"slot"`
+	Quantity int    `json:"quantity"`
+}
+
+type equipResponse struct {
+	Data EquipData `json:"data"`
+}
+
+type EquipData struct {
+	Cooldown  Cooldown        `json:"cooldown"`
+	Slot      string          `json:"slot"`
+	Item      Item            `json:"item"`
+	Character CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) EquipItem(characterName, itemCode, slot string, quantity int) (*EquipData, Error) {
+	url := fmt.Sprintf(EQUIP, characterName)
+
+	body := equipRequest{
+		Quantity: quantity,
+		Code:     itemCode,
+		Slot:     slot,
+	}
+
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data equipResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data.Data, nil
+}
+
+func (c *CharacterClient) UnEquipItem(characterName, slot string, quantity int) (*EquipData, Error) {
+	url := fmt.Sprintf(UNEQUIP, characterName)
+	body := make(map[string]any)
+	body["quantity"] = quantity
+	body["slot"] = slot
+
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data equipResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data.Data, nil
+}
+
 func (c *CharacterClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:

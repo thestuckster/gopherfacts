@@ -33,9 +33,9 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Withdraw Bank Item
 ✅ Grand Exchange Buy
 ✅ Grand Exchange Sell
+✅ Equip Item
+✅ Unequip Item
 
-🚧 Equip Item
-🚧 Unequip Item
 🚧 Deposit Bank Gold
 🚧 Recycle
 🚧 Withdraw Bank Gold
