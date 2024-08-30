@@ -23,7 +23,7 @@ func main() {
 	token := os.Getenv("TOKEN")
 	character := "Billbert"
 	minerCharacter := "AMiner"
-	//crafter := "smellyfeet"
+	crafter := "smellyfeet"
 
 	client := clients.NewClient(&token)
 
@@ -32,6 +32,7 @@ func main() {
 
 	go farmChickens(character, client, &wg)
 	go farmCopper(minerCharacter, client, &wg)
+	go smeltCopper(crafter, client, &wg)
 
 	wg.Wait()
 }
@@ -113,6 +114,46 @@ func farmCopper(name string, client *clients.GopherFactClient, wg *sync.WaitGrou
 			copperLogger.Info().Msg(message)
 			turns++
 		}
+	}
+}
+
+func smeltCopper(name string, client *clients.GopherFactClient, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	smeltLogger := logger.With().Str("method", "smeltCopper").Str("character", name).Logger()
+	smeltLogger.Info().Msg("Smelting Copper")
+
+	turns := 0
+	for {
+		_, err := client.EasyClient.WithdrawFromBank(name, "copper_ore", 100)
+		if err != nil {
+			smeltLogger.Error().Err(err).Msg("Moving to bank failed")
+			break
+		}
+
+		_, err = client.EasyClient.MoveToForge(name)
+		if err != nil {
+			smeltLogger.Error().Err(err).Msg("Moving to forge failed")
+			break
+		}
+
+		craftData, err := client.CharacterClient.Craft(name, "copper", 12)
+		if err != nil {
+			smeltLogger.Error().Err(err).Msg("Craft failed")
+			break
+		}
+
+		details := craftData.Details
+		item := details.Items[0] //since its just copper for now we assume only 1 item returned
+		message := fmt.Sprintf("Turn %d: Crafted %d %s and got %d XP", turns, item.Quantity, item.Code, craftData.Details.XpGained)
+		smeltLogger.Info().Msg(message)
+
+		coolDown := craftData.Cooldown.RemainingSeconds
+		time.Sleep(time.Duration(coolDown) * time.Second)
+
+		dumpInventoryIntoBank(name, client)
+
+		turns++
 	}
 }
 

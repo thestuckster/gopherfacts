@@ -42,6 +42,21 @@ func (c *EasyClient) DepositIntoBank(characterName, itemCode string, amount int)
 	return depositData, nil
 }
 
+func (c *EasyClient) WithdrawFromBank(characterName, itemCode string, amount int) (*WithdrawData, Error) {
+	_, err := c.MoveToBank(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	withdrawData, err := c.charClient.WithdrawFromBank(characterName, itemCode, amount)
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep(time.Duration(withdrawData.Cooldown.RemainingSeconds) * time.Second)
+	return withdrawData, nil
+}
+
 func (c *EasyClient) MoveToChickens(characterName string) (*MoveData, Error) {
 	return c.moveToLocation(characterName, chickens)
 }
