@@ -90,6 +90,25 @@ func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
 	return gatherData, nil
 }
 
+func (c *EasyClient) MineIron(characterName string) (*GatherData, Error) {
+	miningLogger := logger.With().Str("character", characterName).Logger()
+	_, err := c.moveToLocation(characterName, "1:7")
+	if err != nil {
+		return nil, err
+	}
+
+	gatherData, err := c.charClient.Gather(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	coolDown := gatherData.Cooldown.RemainingSeconds
+	miningLogger.Info().Msgf("Mining done. sleeping for %d seconds\n", coolDown)
+	time.Sleep(time.Duration(coolDown) * time.Second)
+
+	return gatherData, nil
+}
+
 // TODO: this is broken
 func (c *EasyClient) MoveToClosetLocation(characterName, resource string) (*MoveData, Error) {
 

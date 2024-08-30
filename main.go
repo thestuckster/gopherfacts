@@ -31,7 +31,7 @@ func main() {
 	wg.Add(3)
 
 	go farmChickens(character, client, &wg)
-	go farmCopper(minerCharacter, client, &wg)
+	go miningFarm(minerCharacter, client, &wg)
 	go smeltCopper(crafter, client, &wg)
 
 	wg.Wait()
@@ -79,27 +79,39 @@ func farmChickens(name string, client *clients.GopherFactClient, wg *sync.WaitGr
 
 }
 
-func farmCopper(name string, client *clients.GopherFactClient, wg *sync.WaitGroup) {
+func miningFarm(name string, client *clients.GopherFactClient, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	copperLogger := logger.With().Str("method", "farmCopper").Str("character", name).Logger()
+	miningLogger := logger.With().Str("method", "miningFarm").Str("character", name).Logger()
+	miningLogger.Info().Msg("Mining Operation commencing....")
 
-	copperLogger.Info().Msg("Farming Copper")
 	turns := 0
 	for {
-		gatherData, err := client.EasyClient.MineCopper(name)
+		miningLogger.Debug().Msg("Fetching character info to determine best mining resource")
+		characterData, err := client.CharacterClient.GetCharacterInfo(name)
+		if err != nil {
+			miningLogger.Error().Err(err).Msg("Fetching character info failed")
+		}
+
+		var gatherData *clients.GatherData
+		miningLevel := characterData.MiningLevel
+		miningLogger.Debug().Msgf("Character mining level is %d", miningLevel)
+
+		if miningLevel < 11 {
+			miningLogger.Info().Msg("Mining Copper")
+			gatherData, err = client.EasyClient.MineCopper(name)
+		} else {
+			miningLogger.Info().Msg("Mining Iron")
+			gatherData, err = client.EasyClient.MineIron(name)
+		}
+
 		if err != nil {
 			var ex *clients.CharacterInventoryFullException
 			if errors.As(err, &ex) {
-				copperLogger.Debug().Msg("Inventory full")
+				miningLogger.Debug().Msg("Inventory full")
 				dumpInventoryIntoBank(name, client)
-				_, err := client.EasyClient.MoveToChickens(name)
-				if err != nil {
-					copperLogger.Debug().Err(err).Msg("Moving back to copper after bank dump failed")
-					panic(err)
-				}
 			} else {
-				copperLogger.Debug().Err(err).Msg("Farming Copper failed")
+				miningLogger.Debug().Err(err).Msg("Mining operation  failed")
 				panic(err)
 			}
 		}
@@ -107,11 +119,7 @@ func farmCopper(name string, client *clients.GopherFactClient, wg *sync.WaitGrou
 		if err == nil {
 
 			message := fmt.Sprintf("MINING: turn %d: Got %d xp from gather\n and looted:%v", turns, gatherData.Details.XpGained, gatherData.Details.Items)
-			for _, item := range gatherData.Details.Items {
-				message += fmt.Sprintf("    %d %s\n", item.Quantity, item.Code)
-			}
-
-			copperLogger.Info().Msg(message)
+			miningLogger.Info().Msg(message)
 			turns++
 		}
 	}
