@@ -2,6 +2,7 @@ package clients
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/thestuckster/gopherfacts/internal"
 )
 
@@ -44,4 +45,27 @@ type GetBankItemsResponse struct {
 func (c *MyAccountClient) GetBankItems(itemCode *string, page, size int) (*GetBankItemsResponse, Error) {
 	//TODO:
 	return nil, nil
+}
+
+type bankExpansionResponse struct {
+	Data BankExpansionData `json:"data"`
+}
+
+type BankExpansionData struct {
+	Cooldown Cooldown `json:"cooldown"`
+}
+
+func (c *CharacterClient) BuyBankExpansion() (*BankExpansionData, Error) {
+	req := internal.BuildPostRequestNoBody(BANK_EXPANSION, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	if resp.StatusCode != 200 {
+		errorMessage := fmt.Sprintf("Error buying bank expansion, status code: %d", resp.StatusCode)
+		return nil, NewCatchAllException(errorMessage)
+	}
+
+	var data bankExpansionResponse
+	if err := json.Unmarshal(respBody, &data); err != nil {
+		return nil, err
+	}
+	return &data.Data, nil
 }

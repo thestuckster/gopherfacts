@@ -276,26 +276,39 @@ func (c *CharacterClient) WithdrawFromBank(characterName, itemCode string, amoun
 	return &data.Data, nil
 }
 
-type buyItemRequest struct {
+type itemRequest struct {
 	Quantity int    `json:"quantity"`
 	Code     string `json:"code"`
 	Price    int    `json:"price"`
 }
 
-type buyItemResponse struct {
-	Data BuyItemData `json:"data"`
+type itemResponse struct {
+	Data ItemExchangeData `json:"data"`
 }
 
-type BuyItemData struct {
+type ItemExchangeData struct {
 	Cooldown    Cooldown        `json:"cooldown"`
 	Transaction Transaction     `json:"transaction"`
 	Character   CharacterSchema `json:"character"`
 }
 
-func (c *CharacterClient) BuyItem(characterName, itemCode string, amount, price int) (*BuyItemData, Error) {
-	//TODO:
-	url := fmt.Sprintf(GE_BUY, characterName)
-	body := buyItemRequest{
+func (c *CharacterClient) SellItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
+	return c.itemTransaction(characterName, itemCode, amount, price, true)
+}
+
+func (c *CharacterClient) BuyItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
+	return c.itemTransaction(characterName, itemCode, amount, price, false)
+}
+
+func (c *CharacterClient) itemTransaction(characterName, itemCode string, amount, price int, sell bool) (*ItemExchangeData, Error) {
+	url := ""
+	if sell == true {
+		url = fmt.Sprintf(GE_SELL, characterName)
+	} else {
+		url = fmt.Sprintf(GE_BUY, characterName)
+	}
+
+	body := itemRequest{
 		Quantity: amount,
 		Code:     itemCode,
 		Price:    price,
@@ -313,7 +326,7 @@ func (c *CharacterClient) BuyItem(characterName, itemCode string, amount, price 
 		return nil, err
 	}
 
-	var data buyItemResponse
+	var data itemResponse
 	err = json.Unmarshal(respBody, &data)
 	if err != nil {
 		return nil, err

@@ -3,6 +3,7 @@ package clients
 const BASE_URL = "https://api.artifactsmmo.com/"
 const BANK = BASE_URL + "my/bank"
 const BANK_GOLD = BANK + "/gold"
+const BANK_EXPANSION = BANK + "/buy_expansion"
 
 const CHARACTER = BASE_URL + "my/%s/"
 const ACTION = CHARACTER + "action/"
@@ -17,6 +18,7 @@ const WITHDRAW_CHARACTER_BANK = CHARACTER_BANK + "withdraw"
 
 const GE = ACTION + "ge/"
 const GE_BUY = GE + "buy"
+const GE_SELL = GE + "sell"
 
 const CHARACTER_INFO = BASE_URL + "characters/%s"
 

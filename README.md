@@ -19,7 +19,7 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ## APIs 
 
 ```
-🚧 Server Status
+✅ Server Status
 ```
 
 ### Actions
@@ -32,13 +32,13 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Bank Deposit
 ✅ Withdraw Bank Item
 ✅ Grand Exchange Buy
+✅ Grand Exchange Sell
 
 🚧 Equip Item
 🚧 Unequip Item
 🚧 Deposit Bank Gold
 🚧 Recycle
 🚧 Withdraw Bank Gold
-🚧 Grand Exchange Sell
 🚧 Accept task
 🚧 Complete Task
 🚧 Task Exchange
@@ -60,6 +60,7 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Get All Characters Info
 ✅ Get single character info
 ✅ Get Bank Gold
+✅ Buy bank expansion
 
 🚧 Get All Characters Logs
 🚧 Get Specific Character Info
