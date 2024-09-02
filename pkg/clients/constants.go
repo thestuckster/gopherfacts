@@ -13,6 +13,7 @@ const GATHER = ACTION + "gathering"
 const CRAFT = ACTION + "crafting"
 const EQUIP = ACTION + "equip"
 const UNEQUIP = ACTION + "unequip"
+const DELETE_ITEM = ACTION + "delete"
 
 const CHARACTER_BANK = ACTION + "bank/"
 const DEPOSIT_CHARACTER_BANK = CHARACTER_BANK + "deposit"

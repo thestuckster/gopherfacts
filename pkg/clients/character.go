@@ -407,6 +407,47 @@ func (c *CharacterClient) UnEquipItem(characterName, slot string, quantity int) 
 	return &data.Data, nil
 }
 
+type deleteItemRequest struct {
+	Quantity int    `json:"quantity"`
+	Code     string `json:"code"`
+}
+type deleteItemResponse struct {
+	Data DeleteItemData `json:"data"`
+}
+
+type DeleteItemData struct {
+	Cooldown  Cooldown        `json:"cooldown"`
+	Item      Item            `json:"item"`
+	Character CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) DeleteItem(characterName, code string, quanity int) (*DeleteItemData, Error) {
+	url := fmt.Sprintf(DELETE_ITEM, characterName)
+	body := deleteItemRequest{
+		Code:     code,
+		Quantity: quanity,
+	}
+
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+	var data deleteItemResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
 func (c *CharacterClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:

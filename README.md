@@ -35,6 +35,7 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Grand Exchange Sell
 ✅ Equip Item
 ✅ Unequip Item
+✅ Delete Item
 
 🚧 Deposit Bank Gold
 🚧 Recycle
