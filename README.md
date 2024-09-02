@@ -39,9 +39,8 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Deposit Bank Gold
 ✅ Withdraw Bank Gold
 ✅ Recycle
+✅ Accept task
 
-
-🚧 Accept task
 🚧 Complete Task
 🚧 Task Cancel
 🚧 Task Exchange

@@ -546,6 +546,35 @@ func (c *CharacterClient) RecycleItem(characterName, code string, quantity int) 
 	return &data.Data, nil
 }
 
+type taskResponse struct {
+	Data TaskData `json:"data"`
+}
+
+type TaskData struct {
+	Cooldown  Cooldown        `json:"cooldown"`
+	Task      Task            `json:"task"`
+	Character CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) AcceptNewTask(characterName string) (*TaskData, Error) {
+	url := fmt.Sprintf(NEW_TASK, characterName)
+	req := internal.BuildPostRequestNoBody(url, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+
+	err := c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data taskResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
 func (c *CharacterClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:

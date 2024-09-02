@@ -16,6 +16,9 @@ const UNEQUIP = ACTION + "unequip"
 const DELETE_ITEM = ACTION + "delete"
 const RECYCLE = ACTION + "recycle"
 
+const TASK = ACTION + "task/"
+const NEW_TASK = TASK + "new"
+
 const CHARACTER_BANK = ACTION + "bank/"
 const DEPOSIT_CHARACTER_BANK = CHARACTER_BANK + "deposit"
 const WITHDRAW_CHARACTER_BANK = CHARACTER_BANK + "withdraw"
