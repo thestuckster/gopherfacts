@@ -36,10 +36,11 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Equip Item
 ✅ Unequip Item
 ✅ Delete Item
+✅ Deposit Bank Gold
+✅ Withdraw Bank Gold
 
-🚧 Deposit Bank Gold
+
 🚧 Recycle
-🚧 Withdraw Bank Gold
 🚧 Accept task
 🚧 Complete Task
 🚧 Task Exchange

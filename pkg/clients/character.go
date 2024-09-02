@@ -210,7 +210,7 @@ type DepositData struct {
 	Character     CharacterSchema `json:"character"`
 }
 
-func (c *CharacterClient) DepositIntoBank(characterName, itemCode string, amount int) (*DepositData, Error) {
+func (c *CharacterClient) DepositItem(characterName, itemCode string, amount int) (*DepositData, Error) {
 	url := fmt.Sprintf(DEPOSIT_CHARACTER_BANK, characterName)
 	body := bankRequest{
 		Quantity: amount,
@@ -248,7 +248,7 @@ type WithdrawData struct {
 	Character CharacterSchema `json:"character"`
 }
 
-func (c *CharacterClient) WithdrawFromBank(characterName, itemCode string, amount int) (*WithdrawData, Error) {
+func (c *CharacterClient) WithdrawItem(characterName, itemCode string, amount int) (*WithdrawData, Error) {
 	url := fmt.Sprintf(WITHDRAW_CHARACTER_BANK, characterName)
 	body := bankRequest{
 		Quantity: amount,
@@ -268,6 +268,66 @@ func (c *CharacterClient) WithdrawFromBank(characterName, itemCode string, amoun
 	}
 
 	var data withdrawResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
+type goldResponse struct {
+	Data GoldData `json:"data"`
+}
+
+type GoldData struct {
+	Cooldown  Cooldown        `json:"cooldown"`
+	Bank      BankGold        `json:"bank"`
+	Character CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) DepositGold(characterName string, quantity int) (*GoldData, Error) {
+	url := fmt.Sprintf(DEPOSIT_GOLD_BANK, characterName)
+	body := make(map[string]int)
+	body["quantity"] = quantity
+
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+	var data goldResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
+func (c *CharacterClient) WithdrawGold(characterName string, quantity int) (any, Error) {
+	url := fmt.Sprintf(WITHDRAW_GOLD_BANK, characterName)
+	body := make(map[string]int)
+	body["quantity"] = quantity
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data goldResponse
 	err = json.Unmarshal(respBody, &data)
 	if err != nil {
 		return nil, err

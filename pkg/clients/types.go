@@ -141,3 +141,7 @@ type Transaction struct {
 	Price      int    `json:"price"`
 	TotalPrice int    `json:"total_price"`
 }
+
+type BankGold struct {
+	Quantity int
+}

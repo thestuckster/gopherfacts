@@ -34,7 +34,7 @@ func (c *EasyClient) DepositIntoBank(characterName, itemCode string, amount int)
 		return nil, err
 	}
 
-	depositData, err := c.charClient.DepositIntoBank(characterName, itemCode, amount)
+	depositData, err := c.charClient.DepositItem(characterName, itemCode, amount)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (c *EasyClient) WithdrawFromBank(characterName, itemCode string, amount int
 		return nil, err
 	}
 
-	withdrawData, err := c.charClient.WithdrawFromBank(characterName, itemCode, amount)
+	withdrawData, err := c.charClient.WithdrawItem(characterName, itemCode, amount)
 	if err != nil {
 		return nil, err
 	}

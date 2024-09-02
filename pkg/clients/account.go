@@ -14,10 +14,6 @@ type GetBankGoldResponse struct {
 	Data BankGold `json:"data"`
 }
 
-type BankGold struct {
-	Quantity int
-}
-
 func (c *MyAccountClient) GetBankGold() (*BankGold, Error) {
 	req := internal.BuildGetRequest(BANK_GOLD, *c.token)
 	resp, body := internal.MakeHttpRequest(req, false)

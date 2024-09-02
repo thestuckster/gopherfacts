@@ -18,6 +18,8 @@ const DELETE_ITEM = ACTION + "delete"
 const CHARACTER_BANK = ACTION + "bank/"
 const DEPOSIT_CHARACTER_BANK = CHARACTER_BANK + "deposit"
 const WITHDRAW_CHARACTER_BANK = CHARACTER_BANK + "withdraw"
+const DEPOSIT_GOLD_BANK = DEPOSIT_CHARACTER_BANK + "/gold"
+const WITHDRAW_GOLD_BANK = WITHDRAW_CHARACTER_BANK + "/gold"
 
 const GE = ACTION + "ge/"
 const GE_BUY = GE + "buy"
