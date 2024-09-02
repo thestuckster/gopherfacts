@@ -14,6 +14,7 @@ const CRAFT = ACTION + "crafting"
 const EQUIP = ACTION + "equip"
 const UNEQUIP = ACTION + "unequip"
 const DELETE_ITEM = ACTION + "delete"
+const RECYCLE = ACTION + "recycle"
 
 const CHARACTER_BANK = ACTION + "bank/"
 const DEPOSIT_CHARACTER_BANK = CHARACTER_BANK + "deposit"

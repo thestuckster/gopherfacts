@@ -311,7 +311,7 @@ func (c *CharacterClient) DepositGold(characterName string, quantity int) (*Gold
 	return &data.Data, nil
 }
 
-func (c *CharacterClient) WithdrawGold(characterName string, quantity int) (any, Error) {
+func (c *CharacterClient) WithdrawGold(characterName string, quantity int) (*GoldData, Error) {
 	url := fmt.Sprintf(WITHDRAW_GOLD_BANK, characterName)
 	body := make(map[string]int)
 	body["quantity"] = quantity
@@ -500,6 +500,44 @@ func (c *CharacterClient) DeleteItem(characterName, code string, quanity int) (*
 		return nil, err
 	}
 	var data deleteItemResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
+type recycleRequest struct {
+	Code     string `json:"code"`
+	Quantity int    `json:"quantity"`
+}
+
+type recycleResponse struct {
+	Data CraftData `json:"data"`
+}
+
+func (c *CharacterClient) RecycleItem(characterName, code string, quantity int) (*CraftData, Error) {
+	url := fmt.Sprintf(RECYCLE, characterName)
+	body := recycleRequest{
+		Code:     code,
+		Quantity: quantity,
+	}
+
+	jsonData, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	req := internal.BuildPostRequest(url, *c.token, bytes.NewReader(jsonData))
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var data recycleResponse
 	err = json.Unmarshal(respBody, &data)
 	if err != nil {
 		return nil, err
