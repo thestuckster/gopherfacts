@@ -554,6 +554,7 @@ type TaskData struct {
 	Cooldown  Cooldown        `json:"cooldown"`
 	Task      Task            `json:"task"`
 	Character CharacterSchema `json:"character"`
+	Reward    Item            `json:"reward"`
 }
 
 func (c *CharacterClient) AcceptNewTask(characterName string) (*TaskData, Error) {
@@ -567,6 +568,80 @@ func (c *CharacterClient) AcceptNewTask(characterName string) (*TaskData, Error)
 	}
 
 	var data taskResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
+type completeTaskResponse struct {
+	Data TaskRewardData `json:"data"`
+}
+
+type TaskRewardData struct {
+	Cooldown  Cooldown        `json:"cooldown"`
+	Reward    Item            `json:"reward"`
+	Character CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) CompleteTask(characterName string) (*TaskRewardData, Error) {
+	url := fmt.Sprintf(COMPLETE_TASK, characterName)
+	req := internal.BuildPostRequestNoBody(url, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err := c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data completeTaskResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
+type taskCancelResponse struct {
+	Data TaskCancelData `json:"data"`
+}
+
+type TaskCancelData struct {
+	Cooldown  Cooldown        `json:"cooldown"`
+	Character CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) CancelTask(characterName string) (*TaskCancelData, Error) {
+	url := fmt.Sprintf(CANCEL_TASK, characterName)
+	req := internal.BuildPostRequestNoBody(url, *c.token)
+
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err := c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data taskCancelResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data.Data, nil
+}
+
+func (c *CharacterClient) ExchangeTaskCoins(characterName string) (*TaskRewardData, Error) {
+	url := fmt.Sprintf(EXCHANGE_TASK, characterName)
+	req := internal.BuildPostRequestNoBody(url, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err := c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data completeTaskResponse
 	err = json.Unmarshal(respBody, &data)
 	if err != nil {
 		return nil, err
@@ -591,6 +666,8 @@ func (c *CharacterClient) buildError(resp *http.Response) Error {
 	//TODO: GE buy 483
 	case 486:
 		return NewActionAlreadyInProgressException()
+	//TODO: Task complete 487
+	//TODO: task complete 488
 	case 490:
 		return NewCharacterAlreadyAtDestinationException()
 	case 493:

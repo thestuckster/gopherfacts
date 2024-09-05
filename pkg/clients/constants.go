@@ -18,6 +18,9 @@ const RECYCLE = ACTION + "recycle"
 
 const TASK = ACTION + "task/"
 const NEW_TASK = TASK + "new"
+const COMPLETE_TASK = TASK + "complete"
+const CANCEL_TASK = TASK + "cancel"
+const EXCHANGE_TASK = TASK + "exchange"
 
 const CHARACTER_BANK = ACTION + "bank/"
 const DEPOSIT_CHARACTER_BANK = CHARACTER_BANK + "deposit"
