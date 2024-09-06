@@ -42,6 +42,9 @@ func GetAllMapData() ([]MapData, error) {
 	for page <= mapData.Pages {
 		page++
 		mapData, err = requestMapData(page)
+		if err != nil {
+			return nil, err
+		}
 		maps = append(maps, mapData.Data...)
 	}
 
@@ -50,7 +53,7 @@ func GetAllMapData() ([]MapData, error) {
 
 func requestMapData(page int) (*mapDataResponse, error) {
 
-	url := fmt.Sprintf("https://api.artifactsmmo.com/maps?page=&d", page)
+	url := fmt.Sprintf("https://api.artifactsmmo.com/maps?page=%d", page)
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
