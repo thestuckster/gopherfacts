@@ -662,12 +662,16 @@ func (c *CharacterClient) buildError(resp *http.Response) Error {
 		return NewUnprocessableEntityException()
 	case 478:
 		return NewNotEnoughResourcesException()
-	//TODO: GE buy 482
-	//TODO: GE buy 483
+	case 482:
+		return NewNoItemAtThisPrice()
+	case 483:
+		return NewTransactionAlreadyInProgressException()
 	case 486:
 		return NewActionAlreadyInProgressException()
-	//TODO: Task complete 487
-	//TODO: task complete 488
+	case 487:
+		return NewCharacterHasNoTask()
+	case 488:
+		return NewTaskNotCompletedException()
 	case 490:
 		return NewCharacterAlreadyAtDestinationException()
 	case 493:

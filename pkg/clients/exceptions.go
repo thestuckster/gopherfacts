@@ -1,8 +1,27 @@
 package clients
 
+import "fmt"
+
 type Error interface {
 	Error() string
 }
+
+// custom client exceptions
+type InvalidContentTypeException struct {
+	Message string
+}
+
+func NewInvalidContentTypeException(t string) *InvalidContentTypeException {
+	return &InvalidContentTypeException{
+		Message: fmt.Sprintf("invalid content type %s", t),
+	}
+}
+
+func (e *InvalidContentTypeException) Error() string {
+	return e.Message
+}
+
+//Artifacts exceptions
 
 type MapNotFoundException struct {
 	Message string
@@ -158,6 +177,62 @@ func NewUnprocessableEntityException() *UnprocessableEntityException {
 }
 
 func (e *UnprocessableEntityException) Error() string {
+	return e.Message
+}
+
+type NoItemAtThisPrice struct {
+	Message string
+}
+
+func NewNoItemAtThisPrice() *NoItemAtThisPrice {
+	return &NoItemAtThisPrice{
+		Message: "No item at this price",
+	}
+}
+
+func (e *NoItemAtThisPrice) Error() string {
+	return e.Message
+}
+
+type TransactionAlreadyInProgressException struct {
+	Message string
+}
+
+func NewTransactionAlreadyInProgressException() *TransactionAlreadyInProgressException {
+	return &TransactionAlreadyInProgressException{
+		Message: "Transaction already in progress",
+	}
+}
+
+func (e *TransactionAlreadyInProgressException) Error() string {
+	return e.Message
+}
+
+type CharacterHasNoTaskException struct {
+	Message string
+}
+
+func NewCharacterHasNoTask() *CharacterHasNoTaskException {
+	return &CharacterHasNoTaskException{
+		Message: "Character has no task",
+	}
+}
+
+func (e *CharacterHasNoTaskException) Error() string {
+	return e.Message
+}
+
+type TaskNotCompletedException struct {
+	Message string
+}
+
+func NewTaskNotCompletedException() *TaskNotCompletedException {
+	return &TaskNotCompletedException{
+		Message: "Task not completed",
+	}
+}
+
+func (e *TaskNotCompletedException) Error() string {
 	return e.Message
 }
 

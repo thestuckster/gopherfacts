@@ -1,6 +1,8 @@
 package clients
 
 const BASE_URL = "https://api.artifactsmmo.com/"
+const MAPS = BASE_URL + "maps"
+
 const BANK = BASE_URL + "my/bank"
 const BANK_GOLD = BANK + "/gold"
 const BANK_EXPANSION = BANK + "/buy_expansion"

@@ -69,3 +69,32 @@ func (c *GopherFactClient) CheckServerStatus() (*ServerStatus, Error) {
 
 	return &serverStatus.Data, nil
 }
+
+func (c *GopherFactClient) GetAllMapData(contentType string) (any, Error) {
+	err := validateContentType(&contentType)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil //TODO
+}
+
+func validateContentType(t *string) Error {
+	if t == nil {
+		return nil
+	}
+
+	switch *t {
+	case "monster":
+	case "workshop":
+	case "resource":
+	case "bank":
+	case "grand_exchange":
+	case "task_master":
+		return nil
+	default:
+		return NewInvalidContentTypeException(*t)
+	}
+
+	return nil
+}
