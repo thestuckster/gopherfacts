@@ -22,10 +22,55 @@ const gudgeonLocation = "4:2"
 
 var logger = zerolog.New(os.Stdout).With().Timestamp().Caller().Logger()
 
+//TODO: easy buy and easy sell
+
 type EasyClient struct {
 	token      *string
 	charClient *CharacterClient
 	mapClient  *MapClient
+}
+
+func (c *EasyClient) Cook(characterName, itemCode string, amount int) (*CraftData, Error) {
+	_, err := c.MoveToCookingStation(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Craft(characterName, itemCode, amount)
+}
+
+func (c *EasyClient) CraftWeapon(characterName, itemCode string, amount int) (*CraftData, Error) {
+	_, err := c.MoveToWeaponCraftingStation(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Craft(characterName, itemCode, amount)
+}
+
+func (c *EasyClient) CraftGear(characterName, itemCode string, amount int) (*CraftData, Error) {
+	_, err := c.MoveToGearCraftingStation(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Craft(characterName, itemCode, amount)
+}
+
+func (c *EasyClient) CraftJewelry(characterName, itemCode string, amount int) (*CraftData, Error) {
+	_, err := c.MoveToJewelryCraftingStation(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Craft(characterName, itemCode, amount)
+}
+
+func (c *EasyClient) Craft(characterName, itemCode string, amount int) (*CraftData, Error) {
+	craftData, err := c.charClient.Craft(characterName, itemCode, amount)
+	time.Sleep(time.Duration(craftData.Cooldown.RemainingSeconds) * time.Second)
+
+	return craftData, err
 }
 
 func (c *EasyClient) DepositIntoBank(characterName, itemCode string, amount int) (*DepositData, Error) {
@@ -58,8 +103,28 @@ func (c *EasyClient) WithdrawFromBank(characterName, itemCode string, amount int
 	return withdrawData, nil
 }
 
+func (c *EasyClient) MoveToWeaponCraftingStation(characterName string) (*MoveData, Error) {
+	return c.moveToLocation(characterName, weaponCraftingLocation)
+}
+
+func (c *EasyClient) MoveToGearCraftingStation(characterName string) (*MoveData, Error) {
+	return c.moveToLocation(characterName, gearCraftingLocation)
+}
+
+func (c *EasyClient) MoveToJewelryCraftingStation(characterName string) (*MoveData, Error) {
+	return c.moveToLocation(characterName, jewelryLocation)
+}
+
+func (c *EasyClient) MoveToExchange(characterName string) (*MoveData, Error) {
+	return c.moveToLocation(characterName, geLocation)
+}
+
 func (c *EasyClient) MoveToChickens(characterName string) (*MoveData, Error) {
 	return c.moveToLocation(characterName, chickens)
+}
+
+func (c *EasyClient) MoveToCookingStation(characterName string) (*MoveData, Error) {
+	return c.moveToLocation(characterName, cookingLocation)
 }
 
 func (c *EasyClient) MoveToBank(characterName string) (*MoveData, Error) {
