@@ -56,45 +56,16 @@ type Announcement struct {
 
 func (c *GopherFactClient) CheckServerStatus() (*ServerStatus, Error) {
 	req := internal.BuildGetRequest(BASE_URL, *c.token)
-	resp, respbody := internal.MakeHttpRequest(req, false)
+	resp, body := internal.MakeHttpRequest(req, false)
 	if resp.StatusCode != 200 {
 		return nil, NewCatchAllException(fmt.Sprintf("Error fetching server status http %d", resp.StatusCode))
 	}
 
 	var serverStatus serverStatusResponse
-	err := json.Unmarshal(respbody, &serverStatus)
+	err := json.Unmarshal(body, &serverStatus)
 	if err != nil {
 		return nil, err
 	}
 
 	return &serverStatus.Data, nil
-}
-
-func (c *GopherFactClient) GetAllMapData(contentType string) (any, Error) {
-	err := validateContentType(&contentType)
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil //TODO
-}
-
-func validateContentType(t *string) Error {
-	if t == nil {
-		return nil
-	}
-
-	switch *t {
-	case "monster":
-	case "workshop":
-	case "resource":
-	case "bank":
-	case "grand_exchange":
-	case "task_master":
-		return nil
-	default:
-		return NewInvalidContentTypeException(*t)
-	}
-
-	return nil
 }
