@@ -15,8 +15,7 @@ client := clients.NewClient(&token)
 err := client.MyCharacterClient.Move(character, 0, 0)
 ```
 
-
-## APIs 
+## APIs
 
 ```
 ✅ Server Status
@@ -62,12 +61,12 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Get single character info
 ✅ Get Bank Gold
 ✅ Buy bank expansion
+✅ Get All Map
+✅ Get All Items
 
 🚧 Get All Characters Logs
 🚧 Get Specific Character Info
 🚧 Get Map
-🚧 Get All Map
 🚧 Get Item
-🚧 Get All Items
 🚧 ... same for monsters, resources, events, GE, 
 ```
