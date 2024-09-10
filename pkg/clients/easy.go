@@ -3,7 +3,6 @@ package clients
 import (
 	"fmt"
 	"github.com/rs/zerolog"
-	"github.com/thestuckster/gopherfacts/internal"
 	"os"
 	"strconv"
 	"strings"
@@ -22,12 +21,40 @@ const gudgeonLocation = "4:2"
 
 var logger = zerolog.New(os.Stdout).With().Timestamp().Caller().Logger()
 
-//TODO: easy buy and easy sell
-
 type EasyClient struct {
 	token      *string
 	charClient *CharacterClient
 	mapClient  *MapClient
+}
+
+func (c *EasyClient) BuyItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
+	_, err := c.MoveToExchange(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := c.charClient.BuyItem(characterName, itemCode, amount, price)
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep(time.Duration(data.Cooldown.RemainingSeconds) * time.Second)
+	return data, nil
+}
+
+func (c *EasyClient) SellItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
+	_, err := c.MoveToExchange(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := c.charClient.BuyItem(characterName, itemCode, amount, price)
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep(time.Duration(data.Cooldown.RemainingSeconds) * time.Second)
+	return data, nil
 }
 
 func (c *EasyClient) Cook(characterName, itemCode string, amount int) (*CraftData, Error) {
@@ -104,42 +131,42 @@ func (c *EasyClient) WithdrawFromBank(characterName, itemCode string, amount int
 }
 
 func (c *EasyClient) MoveToWeaponCraftingStation(characterName string) (*MoveData, Error) {
-	return c.moveToLocation(characterName, weaponCraftingLocation)
+	return c.MoveToCoOrds(characterName, weaponCraftingLocation)
 }
 
 func (c *EasyClient) MoveToGearCraftingStation(characterName string) (*MoveData, Error) {
-	return c.moveToLocation(characterName, gearCraftingLocation)
+	return c.MoveToCoOrds(characterName, gearCraftingLocation)
 }
 
 func (c *EasyClient) MoveToJewelryCraftingStation(characterName string) (*MoveData, Error) {
-	return c.moveToLocation(characterName, jewelryLocation)
+	return c.MoveToCoOrds(characterName, jewelryLocation)
 }
 
 func (c *EasyClient) MoveToExchange(characterName string) (*MoveData, Error) {
-	return c.moveToLocation(characterName, geLocation)
+	return c.MoveToCoOrds(characterName, geLocation)
 }
 
 func (c *EasyClient) MoveToChickens(characterName string) (*MoveData, Error) {
-	return c.moveToLocation(characterName, chickens)
+	return c.MoveToCoOrds(characterName, chickens)
 }
 
 func (c *EasyClient) MoveToCookingStation(characterName string) (*MoveData, Error) {
-	return c.moveToLocation(characterName, cookingLocation)
+	return c.MoveToCoOrds(characterName, cookingLocation)
 }
 
 func (c *EasyClient) MoveToBank(characterName string) (*MoveData, Error) {
-	return c.moveToLocation(characterName, bankLocation)
+	return c.MoveToCoOrds(characterName, bankLocation)
 }
 
 func (c *EasyClient) MoveToForge(characterName string) (*MoveData, Error) {
-	return c.moveToLocation(characterName, forgeLocation)
+	return c.MoveToCoOrds(characterName, forgeLocation)
 }
 
 func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
 
 	miningLogger := logger.With().Str("character", characterName).Logger()
 
-	_, err := c.moveToLocation(characterName, "2:0")
+	_, err := c.MoveToCoOrds(characterName, "2:0")
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +185,7 @@ func (c *EasyClient) MineCopper(characterName string) (*GatherData, Error) {
 
 func (c *EasyClient) MineIron(characterName string) (*GatherData, Error) {
 	miningLogger := logger.With().Str("character", characterName).Logger()
-	_, err := c.moveToLocation(characterName, "1:7")
+	_, err := c.MoveToCoOrds(characterName, "1:7")
 	if err != nil {
 		return nil, err
 	}
@@ -175,8 +202,44 @@ func (c *EasyClient) MineIron(characterName string) (*GatherData, Error) {
 	return gatherData, nil
 }
 
+func (c *EasyClient) MineCoal(characterName string) (*GatherData, Error) {
+	miningLogger := logger.With().Str("character", characterName).Logger()
+	_, err := c.MoveToCoOrds(characterName, "1:6")
+	if err != nil {
+		return nil, err
+	}
+
+	gatherData, err := c.charClient.Gather(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	coolDown := gatherData.Cooldown.RemainingSeconds
+	miningLogger.Info().Msgf("Mining done. sleeping for %d seconds\n", coolDown)
+	time.Sleep(time.Duration(coolDown) * time.Second)
+	return gatherData, nil
+}
+
+func (c *EasyClient) MineGold(characterName string) (*GatherData, Error) {
+	miningLogger := logger.With().Str("character", characterName).Logger()
+	_, err := c.MoveToCoOrds(characterName, "10:-4")
+	if err != nil {
+		return nil, err
+	}
+
+	gatherData, err := c.charClient.Gather(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	coolDown := gatherData.Cooldown.RemainingSeconds
+	miningLogger.Info().Msgf("Mining done. sleeping for %d seconds\n", coolDown)
+	time.Sleep(time.Duration(coolDown) * time.Second)
+	return gatherData, nil
+}
+
 func (c *EasyClient) FishGudgeon(characterName string) (*GatherData, Error) {
-	_, err := c.moveToLocation(characterName, gudgeonLocation)
+	_, err := c.MoveToCoOrds(characterName, gudgeonLocation)
 	if err != nil {
 		return nil, err
 	}
@@ -192,52 +255,54 @@ func (c *EasyClient) FishGudgeon(characterName string) (*GatherData, Error) {
 }
 
 // TODO: this is broken
-func (c *EasyClient) MoveToClosetLocation(characterName, resource string) (*MoveData, Error) {
+//func (c *EasyClient) MoveToClosetLocation(characterName, resource string) (*MoveData, Error) {
+//
+//	moveLogger := logger.With().Str("character", characterName).Str("resource", resource).Logger()
+//
+//	characterData, err := c.charClient.GetCharacterInfo(characterName)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	mapTiles, err := c.mapClient.GetMapDataForResource(&resource, 0)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	startingPoint := internal.Point{
+//		X: float64(characterData.X),
+//		Y: float64(characterData.Y),
+//	}
+//	targets := buildTargetPoints(mapTiles)
+//	closestPoint := internal.ClosestPoint(&startingPoint, *targets)
+//
+//	coordString := fmt.Sprintf("%d:%d", closestPoint.X, closestPoint.Y)
+//	moveLogger.Info().Msgf("Found cloest location to resource at %s", coordString)
+//
+//	moveData, err := c.MoveToCoOrds(characterName, coordString)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return moveData, nil
+//}
+//
+//func buildTargetPoints(mapTiles *[]MapTileData) *[]internal.Point {
+//
+//	targets := make([]internal.Point, len(*mapTiles))
+//	for _, tile := range *mapTiles {
+//		targets = append(targets, internal.Point{
+//			X: float64(tile.X),
+//			Y: float64(tile.Y),
+//		})
+//	}
+//
+//	return &targets
+//}
 
-	moveLogger := logger.With().Str("character", characterName).Str("resource", resource).Logger()
-
-	characterData, err := c.charClient.GetCharacterInfo(characterName)
-	if err != nil {
-		return nil, err
-	}
-
-	mapTiles, err := c.mapClient.GetMapDataForResource(&resource, 0)
-	if err != nil {
-		return nil, err
-	}
-
-	startingPoint := internal.Point{
-		X: float64(characterData.X),
-		Y: float64(characterData.Y),
-	}
-	targets := buildTargetPoints(mapTiles)
-	closestPoint := internal.ClosestPoint(&startingPoint, *targets)
-
-	coordString := fmt.Sprintf("%d:%d", closestPoint.X, closestPoint.Y)
-	moveLogger.Info().Msgf("Found cloest location to resource at %s", coordString)
-
-	moveData, err := c.moveToLocation(characterName, coordString)
-	if err != nil {
-		return nil, err
-	}
-
-	return moveData, nil
-}
-
-func buildTargetPoints(mapTiles *[]MapTileData) *[]internal.Point {
-
-	targets := make([]internal.Point, len(*mapTiles))
-	for _, tile := range *mapTiles {
-		targets = append(targets, internal.Point{
-			X: float64(tile.X),
-			Y: float64(tile.Y),
-		})
-	}
-
-	return &targets
-}
-
-func (c *EasyClient) moveToLocation(characterName, coords string) (*MoveData, Error) {
+// MoveToCoOrds will move your character to the supplied coord string ("X:Y") and automatically handle the cooldown
+// period. In the event that a character is already at its supplied location, it will return nothing.
+func (c *EasyClient) MoveToCoOrds(characterName, coords string) (*MoveData, Error) {
 	moveLogger := logger.With().Str("character", characterName).Str("coords", coords).Logger()
 
 	x, y := getCoords(coords)
@@ -257,6 +322,13 @@ func (c *EasyClient) moveToLocation(characterName, coords string) (*MoveData, Er
 	time.Sleep(time.Duration(coolDown) * time.Second)
 
 	return moveResp, nil
+}
+
+// MoveTo will move your character to the supplied X Y spot on the map and automatically handle the cooldown period.
+// In the event that a character is already at its supplied location, it will return nothing
+func (c *EasyClient) MoveTo(characterName string, x, y int) (*MoveData, Error) {
+	coords := fmt.Sprintf("%d:%d", x, y)
+	return c.MoveToCoOrds(characterName, coords)
 }
 
 func getCoords(coord string) (x, y int) {
