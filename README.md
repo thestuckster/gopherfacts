@@ -7,15 +7,47 @@ Artifact MMO Client: https://artifactsmmo.com/client
 
 ## Getting Started
 
-```
-token := "MyToken"
-character := "MyCharacter"
-client := clients.NewClient(&token)
-
-err := client.MyCharacterClient.Move(character, 0, 0)
+**Install gopherfacts**
+```bash
+go get github.com/thestuckster/gopherfacts
 ```
 
-## APIs
+**Using gopherfacts**
+```go
+import "github.com/thestuckster/gopherfacts/pkg/clients"
+
+func main() {
+
+    //check the artifacts server status
+    statusInfo, err := sdk.CheckServerStatus()
+    if err != nil {
+        logger.Error().Err(err).Msg("Artifacts Server isnt healthy, check back later.")
+        os.Exit(1)
+    }
+    
+    token := "YOUR_TOKEN"
+    character := "YOUR_CHARACTER"
+    
+    // create the client
+    gopherfacts := clients.NewClient(&token)
+    
+    //Character client is the basic functionality client.
+    res, err := gopherfacts.CharacterClient.Move(character, 1, 1)
+    if err != nil {
+        panic(err)
+    }
+	//CharacterClient will NOT handle cooldowns, you must manage them yourself.
+    time.Sleep(time.Duration(res.Cooldown.RemainingSeconds) * time.Second)
+    
+    //EasyClient provides easier to use functionality and WILL handle the cooldowns before returning its result
+    res, err := gopherfacts.EasyClient.MoveToBank(character)
+    if err != nil {
+        panic(err)
+    }
+}
+```
+
+## Implemented Artifacts APIs
 
 ```
 ✅ Server Status
@@ -63,6 +95,7 @@ err := client.MyCharacterClient.Move(character, 0, 0)
 ✅ Buy bank expansion
 ✅ Get All Map
 ✅ Get All Items
+✅ Get All Monsters
 
 🚧 Get All Characters Logs
 🚧 Get Specific Character Info
