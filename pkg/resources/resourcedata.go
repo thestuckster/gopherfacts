@@ -26,8 +26,8 @@ type Resource struct {
 type ResourceDrop struct {
 	Code            string `json:"code"`
 	Rate            int    `json:"rate"`
-	MinimumQuantity string `json:"min_quantity"`
-	MaximumQuantity string `json:"max_quantity"`
+	MinimumQuantity int    `json:"min_quantity"`
+	MaximumQuantity int    `json:"max_quantity"`
 }
 
 func GetAllResources() ([]Resource, error) {
