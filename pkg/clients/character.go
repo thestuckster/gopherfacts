@@ -650,6 +650,33 @@ func (c *CharacterClient) ExchangeTaskCoins(characterName string) (*TaskRewardDa
 	return &data.Data, nil
 }
 
+type restResponse struct {
+	Data RestData `json:"data"`
+}
+
+type RestData struct {
+	Cooldown   Cooldown        `json:"cooldown"`
+	HpRestored int             `json:"hp_restored"`
+	Character  CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) Rest(characterName string) (*RestData, Error) {
+	url := fmt.Sprintf(REST, characterName)
+	req := internal.BuildPostRequestNoBody(url, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err := c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data restResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data.Data, nil
+}
+
 func (c *CharacterClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:

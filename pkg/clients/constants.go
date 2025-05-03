@@ -9,6 +9,7 @@ const BANK_EXPANSION = BANK + "/buy_expansion"
 
 const CHARACTER = BASE_URL + "my/%s/"
 const ACTION = CHARACTER + "action/"
+const REST = ACTION + "rest"
 const MOVE = ACTION + "move/"
 const FIGHT = ACTION + "fight/"
 const GATHER = ACTION + "gathering"
