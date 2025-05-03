@@ -33,7 +33,7 @@ func (c *EasyClient) BuyItem(characterName, itemCode string, amount, price int) 
 		return nil, err
 	}
 
-	data, err := c.charClient.BuyItem(characterName, itemCode, amount, price)
+	data, err := c.charClient.GEBuyItem(characterName, itemCode, amount, price)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *EasyClient) SellItem(characterName, itemCode string, amount, price int)
 		return nil, err
 	}
 
-	data, err := c.charClient.BuyItem(characterName, itemCode, amount, price)
+	data, err := c.charClient.GEBuyItem(characterName, itemCode, amount, price)
 	if err != nil {
 		return nil, err
 	}

@@ -352,11 +352,11 @@ type ItemExchangeData struct {
 	Character   CharacterSchema `json:"character"`
 }
 
-func (c *CharacterClient) SellItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
+func (c *CharacterClient) GESellItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
 	return c.itemTransaction(characterName, itemCode, amount, price, true)
 }
 
-func (c *CharacterClient) BuyItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
+func (c *CharacterClient) GEBuyItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
 	return c.itemTransaction(characterName, itemCode, amount, price, false)
 }
 
