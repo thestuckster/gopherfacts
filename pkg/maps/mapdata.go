@@ -51,6 +51,32 @@ func GetAllMapData() ([]MapData, error) {
 	return maps, nil
 }
 
+type specificMapTileResponse struct {
+	Data MapData `json:"data"`
+}
+
+func GetSpecificMapTile(x, y int) (*MapData, error) {
+	url := fmt.Sprintf("https://api.artifactsmmo.com/maps/%d/%d", x, y)
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var spcResponse specificMapTileResponse
+	err = json.Unmarshal(body, &spcResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return &spcResponse.Data, err
+}
+
 func requestMapData(page int) (*mapDataResponse, error) {
 
 	url := fmt.Sprintf("https://api.artifactsmmo.com/maps?page=%d", page)

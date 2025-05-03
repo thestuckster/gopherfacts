@@ -352,11 +352,11 @@ type ItemExchangeData struct {
 	Character   CharacterSchema `json:"character"`
 }
 
-func (c *CharacterClient) SellItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
+func (c *CharacterClient) GESellItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
 	return c.itemTransaction(characterName, itemCode, amount, price, true)
 }
 
-func (c *CharacterClient) BuyItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
+func (c *CharacterClient) GEBuyItem(characterName, itemCode string, amount, price int) (*ItemExchangeData, Error) {
 	return c.itemTransaction(characterName, itemCode, amount, price, false)
 }
 
@@ -647,6 +647,33 @@ func (c *CharacterClient) ExchangeTaskCoins(characterName string) (*TaskRewardDa
 		return nil, err
 	}
 
+	return &data.Data, nil
+}
+
+type restResponse struct {
+	Data RestData `json:"data"`
+}
+
+type RestData struct {
+	Cooldown   Cooldown        `json:"cooldown"`
+	HpRestored int             `json:"hp_restored"`
+	Character  CharacterSchema `json:"character"`
+}
+
+func (c *CharacterClient) Rest(characterName string) (*RestData, Error) {
+	url := fmt.Sprintf(REST, characterName)
+	req := internal.BuildPostRequestNoBody(url, *c.token)
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	err := c.buildError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var data restResponse
+	err = json.Unmarshal(respBody, &data)
+	if err != nil {
+		return nil, err
+	}
 	return &data.Data, nil
 }
 

@@ -33,7 +33,7 @@ func (c *EasyClient) BuyItem(characterName, itemCode string, amount, price int) 
 		return nil, err
 	}
 
-	data, err := c.charClient.BuyItem(characterName, itemCode, amount, price)
+	data, err := c.charClient.GEBuyItem(characterName, itemCode, amount, price)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *EasyClient) SellItem(characterName, itemCode string, amount, price int)
 		return nil, err
 	}
 
-	data, err := c.charClient.BuyItem(characterName, itemCode, amount, price)
+	data, err := c.charClient.GEBuyItem(characterName, itemCode, amount, price)
 	if err != nil {
 		return nil, err
 	}
@@ -254,51 +254,31 @@ func (c *EasyClient) FishGudgeon(characterName string) (*GatherData, Error) {
 	return gatherData, nil
 }
 
-// TODO: this is broken
-//func (c *EasyClient) MoveToClosetLocation(characterName, resource string) (*MoveData, Error) {
-//
-//	moveLogger := logger.With().Str("character", characterName).Str("resource", resource).Logger()
-//
-//	characterData, err := c.charClient.GetCharacterInfo(characterName)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	mapTiles, err := c.mapClient.GetMapDataForResource(&resource, 0)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	startingPoint := internal.Point{
-//		X: float64(characterData.X),
-//		Y: float64(characterData.Y),
-//	}
-//	targets := buildTargetPoints(mapTiles)
-//	closestPoint := internal.ClosestPoint(&startingPoint, *targets)
-//
-//	coordString := fmt.Sprintf("%d:%d", closestPoint.X, closestPoint.Y)
-//	moveLogger.Info().Msgf("Found cloest location to resource at %s", coordString)
-//
-//	moveData, err := c.MoveToCoOrds(characterName, coordString)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return moveData, nil
-//}
-//
-//func buildTargetPoints(mapTiles *[]MapTileData) *[]internal.Point {
-//
-//	targets := make([]internal.Point, len(*mapTiles))
-//	for _, tile := range *mapTiles {
-//		targets = append(targets, internal.Point{
-//			X: float64(tile.X),
-//			Y: float64(tile.Y),
-//		})
-//	}
-//
-//	return &targets
-//}
+func (c *EasyClient) Rest(characterName string) (*RestData, Error) {
+	data, err := c.charClient.Rest(characterName)
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep(time.Duration(data.Cooldown.RemainingSeconds) * time.Second)
+	return data, nil
+}
+
+func (c *EasyClient) RestUntilTargetHp(characterName string, targetHP int) Error {
+	data, err := c.Rest(characterName)
+	if err != nil {
+		return err
+	}
+
+	for data.Character.HP < targetHP {
+		data, err = c.Rest(characterName)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 // MoveToCoOrds will move your character to the supplied coord string ("X:Y") and automatically handle the cooldown
 // period. In the event that a character is already at its supplied location, it will return nothing.
