@@ -76,6 +76,7 @@ type CharacterSchema struct {
 	CookingXP               int             `json:"cooking_xp"`
 	CookingMaxXP            int             `json:"cooking_max_xp"`
 	HP                      int             `json:"hp"`
+	MaxHP                   int             `json:"max_hp"`
 	Haste                   int             `json:"haste"`
 	CriticalStrike          int             `json:"critical_strike"`
 	Stamina                 int             `json:"stamina"`
