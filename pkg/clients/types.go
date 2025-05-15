@@ -161,8 +161,11 @@ type Transaction struct {
 	TotalPrice int    `json:"total_price"`
 }
 
-type BankGold struct {
-	Quantity int
+type BankDetails struct {
+	Slots             int `json:"slots"`
+	Expansions        int `json:"expansions"`
+	NextExpansionCost int `json:"next_expansion_cost"`
+	Gold              int `json:"gold"`
 }
 
 type Task struct {
