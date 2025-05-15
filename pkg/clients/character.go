@@ -16,8 +16,8 @@ type getCharactersResponse struct {
 	Data []CharacterSchema `json:"data"`
 }
 
-func (c *CharacterClient) GetAllCharactersInfo() ([]CharacterSchema, Error) {
-	url := fmt.Sprintf(CHARACTER, "characters")
+func (c *CharacterClient) GetAllCharactersInfo(artifactsUserName string) ([]CharacterSchema, Error) {
+	url := fmt.Sprintf(ACCOUNT_CHARACTERS, artifactsUserName)
 	req := internal.BuildPostRequestNoBody(url, *c.token)
 	resp, respBody := internal.MakeHttpRequest(req, false)
 	err := c.buildError(resp)

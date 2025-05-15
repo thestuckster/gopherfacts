@@ -7,6 +7,9 @@ const BANK = BASE_URL + "my/bank"
 const BANK_GOLD = BANK + "/gold"
 const BANK_EXPANSION = BANK + "/buy_expansion"
 
+const ACCOUNT = BASE_URL + "account/%s/"
+const ACCOUNT_CHARACTERS = ACCOUNT + "characters"
+
 const CHARACTER = BASE_URL + "my/%s/"
 const ACTION = CHARACTER + "action/"
 const REST = ACTION + "rest"
