@@ -236,6 +236,32 @@ func (e *TaskNotCompletedException) Error() string {
 	return e.Message
 }
 
+type UsernameAlreadyUsedException struct {
+	Message string
+}
+
+func NewUsernameAlreadyUsedException() *UsernameAlreadyUsedException {
+	return &UsernameAlreadyUsedException{
+		Message: "Username already used",
+	}
+}
+
+func (e *UsernameAlreadyUsedException) Error() string { return e.Message }
+
+type EmailAlreadyUsedException struct {
+	Message string
+}
+
+func NewEmailAlreadyUsedException() *EmailAlreadyUsedException {
+	return &EmailAlreadyUsedException{
+		Message: "Email already used",
+	}
+}
+
+func (e *EmailAlreadyUsedException) Error() string {
+	return e.Message
+}
+
 // GENERIC EXCEPTIONS
 
 type CatchAllException struct {
