@@ -80,9 +80,10 @@ func main() {
 ### Account
 
 ```
+✅ Create Account
+✅ Get Account Info
 🚧 Change Password
 🚧 Create Character
-🚧 Create Account
 🚧 Create Token
 ```
 
@@ -99,7 +100,7 @@ func main() {
 
 🚧 Get All Characters Logs
 🚧 Get Specific Character Info
-🚧 Get Map
-🚧 Get Item
+🚧 Get Specific Map Tile
+🚧 Get Specific Item
 🚧 ... same for monsters, resources, events, GE, 
 ```

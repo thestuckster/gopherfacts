@@ -1,5 +1,15 @@
 package clients
 
+type Account struct {
+	Username          string   `json:"username"`
+	Subscribed        bool     `json:"subscribed"`
+	Status            string   `json:"status"`
+	Badges            []string `json:"badges"`
+	AchievementPoints int      `json:"achievement_points"`
+	Banned            bool     `json:"banned"`
+	BanReason         string   `json:"ban_reason"`
+}
+
 type DestinationData struct {
 	Name    string     `json:"name"`
 	Skin    string     `json:"skin"`

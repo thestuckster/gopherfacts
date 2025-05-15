@@ -262,6 +262,20 @@ func (e *EmailAlreadyUsedException) Error() string {
 	return e.Message
 }
 
+type AccountNotFoundException struct {
+	Message string
+}
+
+func NewAccountNotFoundException() *AccountNotFoundException {
+	return &AccountNotFoundException{
+		Message: "Account not found",
+	}
+}
+
+func (e *AccountNotFoundException) Error() string {
+	return e.Message
+}
+
 // GENERIC EXCEPTIONS
 
 type CatchAllException struct {

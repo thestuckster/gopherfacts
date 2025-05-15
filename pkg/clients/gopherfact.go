@@ -99,6 +99,27 @@ func (c *GopherFactClient) CreateAccount(username, password, email string) (*boo
 	return &t, nil
 }
 
+type getAccountResponse struct {
+	Data Account `json:"data"`
+}
+
+func (c *GopherFactClient) GetAccountInfo(artifactsUsername string) (*Account, Error) {
+	url := fmt.Sprintf(ACCOUNT, artifactsUsername)
+	req := internal.BuildGetRequest(url, "")
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	if resp.StatusCode == 404 {
+		return nil, NewAccountNotFoundException()
+	}
+
+	var getAccount getAccountResponse
+	err := json.Unmarshal(respBody, &getAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &getAccount.Data, nil
+}
+
 func (c *GopherFactClient) buildError(resp *http.Response) Error {
 	switch resp.StatusCode {
 	case 200:
