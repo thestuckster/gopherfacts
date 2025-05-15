@@ -1,9 +1,11 @@
 package clients
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/thestuckster/gopherfacts/internal"
+	"net/http"
 	"time"
 )
 
@@ -68,4 +70,65 @@ func (c *GopherFactClient) CheckServerStatus() (*ServerStatus, Error) {
 	}
 
 	return &serverStatus.Data, nil
+}
+
+// CreateAccount Returns &true if account creation was successful. Returns &false with either a UsernameAlreadyInUseException or
+// EmailAlreadyInUseException otherwise.
+func (c *GopherFactClient) CreateAccount(username, password, email string) (*bool, Error) {
+	url := BASE_URL + "/accounts/create"
+
+	body := make(map[string]string)
+	body["username"] = username
+	body["password"] = password
+	body["email"] = email
+
+	f := false
+	jsonString, err := json.Marshal(body)
+	if err != nil {
+		return &f, err
+	}
+
+	req := internal.BuildPostRequest(url, "", bytes.NewReader(jsonString))
+	resp, _ := internal.MakeHttpRequest(req, false)
+	err = c.buildError(resp)
+	if err != nil {
+		return &f, err
+	}
+
+	t := true
+	return &t, nil
+}
+
+type getAccountResponse struct {
+	Data Account `json:"data"`
+}
+
+func (c *GopherFactClient) GetAccountInfo(artifactsUsername string) (*Account, Error) {
+	url := fmt.Sprintf(ACCOUNT, artifactsUsername)
+	req := internal.BuildGetRequest(url, "")
+	resp, respBody := internal.MakeHttpRequest(req, false)
+	if resp.StatusCode == 404 {
+		return nil, NewAccountNotFoundException()
+	}
+
+	var getAccount getAccountResponse
+	err := json.Unmarshal(respBody, &getAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &getAccount.Data, nil
+}
+
+func (c *GopherFactClient) buildError(resp *http.Response) Error {
+	switch resp.StatusCode {
+	case 200:
+		return nil
+	case 456:
+		return NewUsernameAlreadyUsedException()
+	case 457:
+		return NewEmailAlreadyUsedException()
+	default:
+		return nil
+	}
 }

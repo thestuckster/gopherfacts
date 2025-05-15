@@ -12,26 +12,6 @@ type MyAccountClient struct {
 	token *string
 }
 
-type GetBankGoldResponse struct {
-	Data BankGold `json:"data"`
-}
-
-func (c *MyAccountClient) GetBankGold() (*BankGold, Error) {
-	req := internal.BuildGetRequest(BANK_GOLD, *c.token)
-	resp, body := internal.MakeHttpRequest(req, false)
-
-	if resp.StatusCode != 200 {
-		//error thrown here
-	}
-
-	var data GetBankGoldResponse
-	if err := json.Unmarshal(body, &data); err != nil {
-		return nil, err //TODO: custom error
-	}
-
-	return &data.Data, nil
-}
-
 type getBankItemResponse struct {
 	Data  []Item `json:"data"`
 	Total int    `json:"total"`
@@ -105,6 +85,22 @@ func (c *MyAccountClient) BuyBankExpansion() (*BankExpansionData, Error) {
 		return nil, err
 	}
 	return &data.Data, nil
+}
+
+type bankDetailsResponse struct {
+	Data BankDetails `json:"data"`
+}
+
+func (c *MyAccountClient) GetBankDetails() (*BankDetails, Error) {
+	req := internal.BuildGetRequest(BANK, *c.token)
+	_, respBody := internal.MakeHttpRequest(req, false)
+
+	var details bankDetailsResponse
+	if err := json.Unmarshal(respBody, &details); err != nil {
+		return nil, err
+	}
+
+	return &details.Data, nil
 }
 
 func (c *MyAccountClient) buildError(resp *http.Response) Error {

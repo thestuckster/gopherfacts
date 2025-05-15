@@ -11,6 +11,7 @@ func BuildGetRequest(fullUrl, bearerToken string) *http.Request {
 	return BuildHttpRequest("GET", fullUrl, bearerToken, nil)
 }
 
+// BuildPostRequest Builds a standard post request with a body. Use "" for bearerToken if you do not want to supply a JWT.
 func BuildPostRequest(fullUrl, bearerToken string, body io.Reader) *http.Request {
 	return BuildHttpRequest("POST", fullUrl, bearerToken, body)
 }
